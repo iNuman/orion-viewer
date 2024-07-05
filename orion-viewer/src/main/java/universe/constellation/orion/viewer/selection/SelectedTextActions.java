@@ -78,16 +78,16 @@ public class SelectedTextActions {
             }
         });
 
-//        popup.setTouchInterceptor(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-//                    popup.dismiss();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        popup.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                    popup.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         popup.setOnDismissListener(originalDialog::dismiss);
     }

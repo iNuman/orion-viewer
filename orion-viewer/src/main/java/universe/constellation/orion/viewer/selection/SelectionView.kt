@@ -15,9 +15,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import universe.constellation.orion.viewer.R
-import java.lang.Math.abs
-
-
 
 
 class SelectionView : View {
@@ -105,10 +102,13 @@ class SelectionView : View {
                     startX = event.x.toInt()
                     startY = event.y.toInt()
                     isDraggingStart = true
+                    notifyDialogChanged()
                 } else if (isInsideHandle(event, endPoint)) {
                     startX = event.x.toInt()
                     startY = event.y.toInt()
                     isDraggingEnd = true
+                    notifyDialogChanged()
+
                 }
             }
             MotionEvent.ACTION_MOVE -> {
@@ -119,6 +119,8 @@ class SelectionView : View {
                     width = kotlin.math.abs(endX - startX)
                     height = kotlin.math.abs(endY - startY)
                     updateView()
+                    notifyDialogChanged()
+
                 } else if (isDraggingEnd) {
                     endPoint.set(event.x, event.y)
                     val endX = event.x.toInt()
@@ -126,6 +128,8 @@ class SelectionView : View {
                     width = kotlin.math.abs(endX - startX)
                     height = kotlin.math.abs(endY - startY)
                     updateView()
+                    notifyDialogChanged()
+
 
                 }
                 invalidate()
@@ -150,7 +154,10 @@ class SelectionView : View {
     }
 
     private fun notifySelectionChanged() {
-        onSelectionChangedListener?.onSelectionChanged(startX, startY, width, height)
+        onSelectionChangedListener?.onSelectionChanged(startX, startY, width, height, oldRect)
+    }
+    private fun notifyDialogChanged() {
+        onSelectionChangedListener?.updateDialog(startX, startY, width, height)
     }
 
 
@@ -166,7 +173,8 @@ class SelectionView : View {
     }
 
     interface OnSelectionChangedListener {
-        fun onSelectionChanged(startX: Int, startY: Int, width: Int, height: Int)
+        fun onSelectionChanged(startX: Int, startY: Int, width: Int, height: Int, newRectF: Rect?)
+        fun updateDialog(startX: Int, startY: Int, width: Int, height: Int)
     }
 }
 
