@@ -30,9 +30,9 @@ public class SelectedTextActions {
         height = activity.getView().getSceneHeight();
         this.originalDialog = originalDialog;
         popup = new PopupWindow(activity);
-        popup.setFocusable(true);
-        popup.setTouchable(true);
-        popup.setOutsideTouchable(true);
+//        popup.setFocusable(true);
+//        popup.setTouchable(true);
+//        popup.setOutsideTouchable(true);
         popup.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 
@@ -78,16 +78,16 @@ public class SelectedTextActions {
             }
         });
 
-        popup.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                    popup.dismiss();
-                    return true;
-                }
-                return false;
-            }
-        });
+//        popup.setTouchInterceptor(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+//                    popup.dismiss();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
         popup.setOnDismissListener(originalDialog::dismiss);
     }
@@ -95,17 +95,21 @@ public class SelectedTextActions {
     public void show(String text, Rect selectionRect) {
         int x = selectionRect.left, y = 0;
         System.out.println(selectionRect);
-        if (selectionRect.bottom <= height * 4 /5) {
+        // Calculate the height of the popup
+        int popupHeight = popup.getHeight();
+
+        // Check if there's enough space above the selectionRect to show the popup
+        if (selectionRect.top >= popupHeight + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5)) {
+            y = (int) (selectionRect.top - popupHeight - OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 60));
+        } else if (selectionRect.bottom <= height * 4 / 5) {
             y = (int) (selectionRect.bottom + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5));
-        } else if (selectionRect.top >= height / 5) {
-            System.out.println("1 " + popup.getHeight());
-            y = (int) (selectionRect.top - OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 60));
         } else {
             y = selectionRect.centerY();
         }
+
         this.text = text;
         View decorView = originalDialog.getWindow().getDecorView();
-        popup.showAsDropDown(decorView, x, -decorView.getHeight() + y);
+        popup.showAsDropDown(decorView, x, y - decorView.getHeight());
     }
 
 }

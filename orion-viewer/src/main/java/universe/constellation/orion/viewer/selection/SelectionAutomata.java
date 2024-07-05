@@ -22,69 +22,183 @@ public class SelectionAutomata extends DialogOverView {
 
     private final static int SINGLE_WORD_AREA = 2;
 
-    private STATE state = STATE.CANCELED;
+    private STATE state = STATE.MOVING;
 
-    private int startX, startY, width, height;
+    private int startX, startY, endX, endY;
+    private int initialStartX, initialStartY, initialEndX, initialEndY;
+
+    //    private boolean isDraggingStart = false;
+//    private boolean isDraggingEnd = false;
+    private static final int HANDLE_TOUCH_THRESHOLD = 50; // Adjust as needed
 
     private final SelectionView selectionView;
 
     private boolean isSingleWord = false;
-
     private boolean translate = false;
 
     public SelectionAutomata(final OrionViewerActivity activity) {
         super(activity, universe.constellation.orion.viewer.R.layout.text_selector, android.R.style.Theme_Translucent_NoTitleBar);
 
         selectionView = dialog.findViewById(R.id.text_selector);
-        selectionView.setOnTouchListener((v, event) -> SelectionAutomata.this.onTouch(event));
+//        selectionView.setOnTouchListener((v, event) -> SelectionAutomata.this.onTouch(event));
     }
 
-    public boolean onTouch(MotionEvent event) {
-        int action = event.getAction();
 
-        //System.out.println("aaaction " + action + " " + event.getX() + ", " + event.getY() + " " + state);
-        STATE oldState = state;
-        boolean result = true;
-        switch (state) {
-            case START:
-                if (action == MotionEvent.ACTION_DOWN) {
-                    startX = (int) event.getX();
-                    startY = (int) event.getY();
-                    width = 0;
-                    height = 0;
-                    state = STATE.MOVING;
-                    selectionView.reset();
-                } else {
-                    state = STATE.CANCELED;
-                }
-                break;
+//    public boolean onTouch(MotionEvent event) {
+//        int action = event.getAction();
+//        STATE oldState = state;
+//        boolean result = true;
+//
+//        switch (state) {
+//            case START:
+//                if (action == MotionEvent.ACTION_DOWN) {
+//                    Log.d("ffnet", "onTouch: ");
+//                    // Determine if touch is near start or end handle
+//                    if (isNearStartHandle(event)) {
+//                        // Start dragging start handle
+//                        state = STATE.MOVING;
+//                        isDraggingStart = true;
+//                        startX = (int) event.getX();
+//                        startY = (int) event.getY();
+//                        initialStartX = startX;
+//                        initialStartY = startY;
+//                        state = STATE.MOVING;
+////                        selectionView.reset();
+//
+//                    } else if (isNearEndHandle(event)) {
+//                        // Start dragging end handle
+//                        state = STATE.MOVING;
+//                        isDraggingEnd = true;
+//                    } else {
+//                        state = STATE.CANCELED;
+//                    }
+//                } else {
+//                    state = STATE.CANCELED;
+//                }
+//                break;
+//
+//            case MOVING:
+//                if (action == MotionEvent.ACTION_MOVE) {
+//                    if (isDraggingStart && selectionView.startPoint != null) {
+//                        startX = (int) event.getX();
+//                        startY = (int) event.getY();
+//                        initialStartX = startX;
+//                        initialStartY = startY;
+//                        selectionView.updateView(Math.min(initialStartX, endX), Math.min(initialStartY, endY), Math.max(initialStartX, endX), Math.max(initialStartY, endY));
+//
+////                        updateSelectionView();
+//                        selectionView.invalidate();
+//                    } else if (isDraggingEnd && selectionView.endPoint != null) {
+//                        // Update endPoint in SelectionView
+//                        endX = (int) event.getX();
+//                        endY = (int) event.getY();
+//                        selectionView.updateView(Math.min(initialStartX, endX), Math.min(initialStartY, endY), Math.max(initialStartX, endX), Math.max(initialStartY, endY));
+//                        selectionView.invalidate();
+//                    }
+//
+//
+//                } else if (action == MotionEvent.ACTION_UP) {
+//                    state = STATE.END;
+//                    isDraggingStart = false;
+//                    isDraggingEnd = false;
+//                }
+//                break;
+//
+//            default:
+//                result = false;
+//        }
+//
+//        if (oldState != state) {
+//            switch (state) {
+//                case CANCELED:
+//                    dialog.dismiss();
+//                    break;
+//
+//                case END:
+//                    // Use startPoint and endPoint from SelectionView for selection
+//                    selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
+//                    break;
+//            }
+//        }
+//        return result;
+//    }
 
-            case MOVING:
-                int endX = (int) event.getX();
-                int endY = (int) event.getY();
-                width = endX - startX;
-                height = endY - startY;
-                if (action == MotionEvent.ACTION_UP) {
-                    state = STATE.END;
-                } else {
-                    selectionView.updateView(Math.min(startX, endX), Math.min(startY, endY), Math.max(startX, endX), Math.max(startY, endY));
-                }
-                break;
+//    private boolean isNearStartHandle(MotionEvent event) {
+//        // Calculate distance from touch point to startPoint and check if within threshold
+//        if (selectionView.startPoint != null) {
+//            double distance = Math.sqrt(
+//                    Math.pow((event.getX() - selectionView.startPoint.x), 2.0) +
+//                            Math.pow((event.getY() - selectionView.startPoint.y), 2.0)
+//            );
+//            return distance <= HANDLE_TOUCH_THRESHOLD;
+//        }
+//        return false;
+//    }
 
-            default: result = false;
-        }
+//    private boolean isNearEndHandle(MotionEvent event) {
+//        // Calculate distance from touch point to endPoint and check if within threshold
+//        if (selectionView.endPoint != null) {
+//            double distance = Math.sqrt(
+//                    Math.pow((event.getX() - selectionView.endPoint.x), 2.0) +
+//                            Math.pow((event.getY() - selectionView.endPoint.y), 2.0)
+//            );
+//            return distance <= HANDLE_TOUCH_THRESHOLD;
+//        }
+//        return false;
+//    }
 
-        if (oldState != state) {
-            switch (state) {
-                case CANCELED: dialog.dismiss(); break;
 
-                case END:
-                    selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
-                    break;
-            }
-        }
-        return result;
-    }
+//
+//    public boolean onTouch(MotionEvent event) {
+//        int action = event.getAction();
+//        STATE oldState = state;
+//        boolean result = true;
+//        switch (state) {
+//            case START:
+//                if (action == MotionEvent.ACTION_DOWN) {
+//                    startX = (int) event.getX();
+//                    startY = (int) event.getY();
+//                    initialStartX = startX;
+//                    initialStartY = startY;
+//                    state = STATE.MOVING;
+//                    selectionView.reset();
+//                } else {
+//                    state = STATE.CANCELED;
+//                }
+//                break;
+//
+//            case MOVING:
+//                endX = (int) event.getX();
+//                endY = (int) event.getY();
+//                if (action == MotionEvent.ACTION_UP) {
+//                    state = STATE.END;
+//                } else {
+//                    selectionView.updateView(Math.min(initialStartX, endX), Math.min(initialStartY, endY), Math.max(initialStartX, endX), Math.max(initialStartY, endY));
+//                }
+//                break;
+//
+//            default:
+//                result = false;
+//        }
+//
+//        if (oldState != state) {
+//            switch (state) {
+//                case CANCELED:
+//                    dialog.dismiss();
+//                    break;
+//
+//                case END:
+//                    selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
+//                    break;
+//            }
+//        }
+//        return result;
+//    }
+
+
+//    public void updateSelection(int left, int top, int right, int bottom) {
+//        selectionView.updateView(left, top, right, bottom);
+//    }
 
     public void selectText(
             boolean isSingleWord, boolean translate, List<PageAndSelection> data, Rect originSelection
@@ -94,7 +208,7 @@ public class SelectionAutomata extends DialogOverView {
         Controller controller = activity.getController();
         if (controller == null) return;
 
-        for (PageAndSelection selection: data) {
+        for (PageAndSelection selection : data) {
             Rect rect = selection.getAbsoluteRectWithoutCrop();
             TextAndSelection text = controller.selectRawText(selection.getPage(), rect.left, rect.top, rect.width(), rect.height(), isSingleWord);
             if (text != null) {
@@ -118,7 +232,6 @@ public class SelectionAutomata extends DialogOverView {
                 Action.DICTIONARY.doAction(controller, activity, text);
             } else {
                 if (isSingleWord && !dialog.isShowing()) {
-                    //TODO: refactor
                     final Rect origin = originSelection;
                     dialog.setOnShowListener(dialog2 -> {
                         new SelectedTextActions(activity, dialog).show(text, origin);
@@ -139,6 +252,7 @@ public class SelectionAutomata extends DialogOverView {
     public void startSelection(boolean isSingleWord, boolean translate) {
         startSelection(isSingleWord, translate, false);
     }
+
     public void startSelection(boolean isSingleWord, boolean translate, boolean quite) {
         selectionView.setColorFilter(activity.getFullScene().getColorStuff().getBackgroundPaint().getColorFilter());
         if (!quite) {
@@ -161,21 +275,12 @@ public class SelectionAutomata extends DialogOverView {
     }
 
     private Rect getScreenSelectionRect() {
-        int startX = this.startX;
-        int startY = this.startY;
-        int width = this.width;
-        int height = this.height;
-
-        if (width < 0) {
-            startX += width;
-            width = -width;
-        }
-        if (height < 0) {
-            startY += height;
-            height = -height;
-        }
-
-        return new Rect(startX, startY, startX + width, startY + height);
+        return new Rect(
+                Math.min(initialStartX, endX),
+                Math.min(initialStartY, endY),
+                Math.max(initialStartX, endX),
+                Math.max(initialStartY, endY)
+        );
     }
 
     public static List<PageAndSelection> getSelectionRectangle(int startX, int startY, int width, int height, boolean isSingleWord, PageLayoutManager pageLayoutManager) {

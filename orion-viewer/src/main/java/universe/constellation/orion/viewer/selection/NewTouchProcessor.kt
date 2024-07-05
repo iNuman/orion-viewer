@@ -69,6 +69,8 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
 
     private var isFlingActiveOnDown = false
 
+    private var selectionAutomata: SelectionAutomata = SelectionAutomata(activity)
+
     init {
         detector.setIsLongpressEnabled(true)
         detector.setOnDoubleTapListener(this)
@@ -150,6 +152,7 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
             return false
         }
         nextState = State.MOVE
+//        selectionAutomata.onTouch(e2)
         view.pageLayoutManager?.doScroll(e2.x, e2.y, -distanceX, -distanceY) ?: return false
         return true
     }
@@ -183,6 +186,8 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
 
         log("onLongPress $state $nextState")
         if (state != State.UNDEFINED) return
+        selectionAutomata.startSelection(true, false) // Start selection on long press
+        state = State.MOVE // Switch to moving state
         doAction(
             ContextAction.findAction(activity.globalOptions.LONG_TAP_ACTION.value),
             e,
