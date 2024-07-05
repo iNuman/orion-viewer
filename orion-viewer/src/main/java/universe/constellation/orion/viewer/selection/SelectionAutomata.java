@@ -22,14 +22,9 @@ public class SelectionAutomata extends DialogOverView {
 
     private final static int SINGLE_WORD_AREA = 2;
 
-    private STATE state = STATE.MOVING;
+    private STATE state = STATE.CANCELED;
 
-    private int startX, startY, endX, endY;
-    private int initialStartX, initialStartY, initialEndX, initialEndY;
-
-    //    private boolean isDraggingStart = false;
-//    private boolean isDraggingEnd = false;
-    private static final int HANDLE_TOUCH_THRESHOLD = 50; // Adjust as needed
+    private int startX, startY, width, height;
 
     private final SelectionView selectionView;
 
@@ -40,6 +35,16 @@ public class SelectionAutomata extends DialogOverView {
         super(activity, universe.constellation.orion.viewer.R.layout.text_selector, android.R.style.Theme_Translucent_NoTitleBar);
 
         selectionView = dialog.findViewById(R.id.text_selector);
+        selectionView.setOnSelectionChangedListener(new SelectionView.OnSelectionChangedListener() {
+            @Override
+            public void onSelectionChanged(int startXX, int startYY, int widthh, int heightt) {
+                startX = startXX;
+                startY = startYY;
+                width = widthh;
+                height = heightt;
+                selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
+            }
+        });
 //        selectionView.setOnTouchListener((v, event) -> SelectionAutomata.this.onTouch(event));
     }
 
@@ -208,7 +213,7 @@ public class SelectionAutomata extends DialogOverView {
         Controller controller = activity.getController();
         if (controller == null) return;
 
-        for (PageAndSelection selection : data) {
+        for (PageAndSelection selection: data) {
             Rect rect = selection.getAbsoluteRectWithoutCrop();
             TextAndSelection text = controller.selectRawText(selection.getPage(), rect.left, rect.top, rect.width(), rect.height(), isSingleWord);
             if (text != null) {
@@ -232,6 +237,7 @@ public class SelectionAutomata extends DialogOverView {
                 Action.DICTIONARY.doAction(controller, activity, text);
             } else {
                 if (isSingleWord && !dialog.isShowing()) {
+                    //TODO: refactor
                     final Rect origin = originSelection;
                     dialog.setOnShowListener(dialog2 -> {
                         new SelectedTextActions(activity, dialog).show(text, origin);
@@ -252,7 +258,6 @@ public class SelectionAutomata extends DialogOverView {
     public void startSelection(boolean isSingleWord, boolean translate) {
         startSelection(isSingleWord, translate, false);
     }
-
     public void startSelection(boolean isSingleWord, boolean translate, boolean quite) {
         selectionView.setColorFilter(activity.getFullScene().getColorStuff().getBackgroundPaint().getColorFilter());
         if (!quite) {
@@ -275,12 +280,21 @@ public class SelectionAutomata extends DialogOverView {
     }
 
     private Rect getScreenSelectionRect() {
-        return new Rect(
-                Math.min(initialStartX, endX),
-                Math.min(initialStartY, endY),
-                Math.max(initialStartX, endX),
-                Math.max(initialStartY, endY)
-        );
+        int startX = this.startX;
+        int startY = this.startY;
+        int width = this.width;
+        int height = this.height;
+
+        if (width < 0) {
+            startX += width;
+            width = -width;
+        }
+        if (height < 0) {
+            startY += height;
+            height = -height;
+        }
+
+        return new Rect(startX, startY, startX + width, startY + height);
     }
 
     public static List<PageAndSelection> getSelectionRectangle(int startX, int startY, int width, int height, boolean isSingleWord, PageLayoutManager pageLayoutManager) {

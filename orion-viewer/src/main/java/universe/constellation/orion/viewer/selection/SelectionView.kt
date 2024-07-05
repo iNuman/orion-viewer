@@ -15,9 +15,19 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import universe.constellation.orion.viewer.R
-import kotlin.math.abs
+import java.lang.Math.abs
+
+
+
 
 class SelectionView : View {
+
+    private var onSelectionChangedListener: OnSelectionChangedListener? = null
+
+    fun setOnSelectionChangedListener(listener: OnSelectionChangedListener) {
+        this.onSelectionChangedListener = listener
+    }
+
     private var oldRect: Rect? = null
     private val paint = Paint()
     private var isDraggingStart = false
@@ -29,6 +39,11 @@ class SelectionView : View {
 
     private var startPoint: PointF = PointF(0f, 0f)
     private var endPoint: PointF = PointF(0f, 0f)
+
+    private var startX: Int = 0
+    private var startY: Int = 0
+    private var width: Int = 0
+    private var height: Int = 0
 
     init {
         startHandleDrawable = ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_left)?.let {
@@ -87,24 +102,38 @@ class SelectionView : View {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (isInsideHandle(event, startPoint)) {
+                    startX = event.x.toInt()
+                    startY = event.y.toInt()
                     isDraggingStart = true
                 } else if (isInsideHandle(event, endPoint)) {
+                    startX = event.x.toInt()
+                    startY = event.y.toInt()
                     isDraggingEnd = true
                 }
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isDraggingStart) {
                     startPoint.set(event.x, event.y)
+                    val endX = event.x.toInt()
+                    val endY = event.y.toInt()
+                    width = kotlin.math.abs(endX - startX)
+                    height = kotlin.math.abs(endY - startY)
                     updateView()
                 } else if (isDraggingEnd) {
                     endPoint.set(event.x, event.y)
+                    val endX = event.x.toInt()
+                    val endY = event.y.toInt()
+                    width = kotlin.math.abs(endX - startX)
+                    height = kotlin.math.abs(endY - startY)
                     updateView()
+
                 }
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
                 isDraggingStart = false
                 isDraggingEnd = false
+                notifySelectionChanged()
             }
         }
         return true
@@ -120,6 +149,11 @@ class SelectionView : View {
         return touchRect.contains(event.x, event.y)
     }
 
+    private fun notifySelectionChanged() {
+        onSelectionChangedListener?.onSelectionChanged(startX, startY, width, height)
+    }
+
+
     fun reset() {
         oldRect = null
         invalidate()
@@ -129,6 +163,10 @@ class SelectionView : View {
         paint.color = Color.BLACK
         paint.colorFilter = colorFilter
         paint.alpha = 64
+    }
+
+    interface OnSelectionChangedListener {
+        fun onSelectionChanged(startX: Int, startY: Int, width: Int, height: Int)
     }
 }
 
