@@ -32,7 +32,7 @@ class SelectionView : View {
     private var startHandleDrawable: Drawable? = null
     private var endHandleDrawable: Drawable? = null
     private var handleSize: Int = 0
-    private var touchAreaSize: Int = 0 // Enlarged touch area size
+    private var touchAreaSize: Int = 0
 
     private var startPoint: PointF = PointF(0f, 0f)
     private var endPoint: PointF = PointF(0f, 0f)
@@ -52,7 +52,7 @@ class SelectionView : View {
             DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
         }
         handleSize = startHandleDrawable?.intrinsicWidth?.minus(24) ?: 0
-        touchAreaSize = handleSize * 2 // Set touch area to be twice the handle size for better accessibility
+        touchAreaSize = handleSize * 2
     }
 
     constructor(context: Context?) : super(context)
@@ -97,6 +97,8 @@ class SelectionView : View {
         handle.draw(canvas)
     }
 
+
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -105,12 +107,10 @@ class SelectionView : View {
                     startX = event.x.toInt()
                     startY = event.y.toInt()
                     isDraggingStart = true
-                    notifyDialogChanged()
                 } else if (isInsideHandle(event, endPoint)) {
                     startX = event.x.toInt()
                     startY = event.y.toInt()
                     isDraggingEnd = true
-                    notifyDialogChanged()
                 }
                 onSelectionChangedListener?.onStateChanged(state)
             }
@@ -123,7 +123,6 @@ class SelectionView : View {
                     width = kotlin.math.abs(endX - startX)
                     height = kotlin.math.abs(endY - startY)
                     updateView()
-                    notifyDialogChanged()
                 } else if (isDraggingEnd) {
                     endPoint.set(event.x, event.y)
                     val endX = event.x.toInt()
@@ -131,7 +130,6 @@ class SelectionView : View {
                     width = kotlin.math.abs(endX - startX)
                     height = kotlin.math.abs(endY - startY)
                     updateView()
-                    notifyDialogChanged()
                 }
                 invalidate()
                 onSelectionChangedListener?.onStateChanged(state)
@@ -161,10 +159,6 @@ class SelectionView : View {
         onSelectionChangedListener?.onSelectionChanged(startX, startY, width, height, oldRect)
     }
 
-    private fun notifyDialogChanged() {
-        onSelectionChangedListener?.updateDialog(startX, startY, width, height)
-    }
-
     fun reset() {
         oldRect = null
         invalidate()
@@ -180,7 +174,6 @@ class SelectionView : View {
 
     interface OnSelectionChangedListener {
         fun onSelectionChanged(startX: Int, startY: Int, width: Int, height: Int, newRectF: Rect?)
-        fun updateDialog(startX: Int, startY: Int, width: Int, height: Int)
         fun onStateChanged(state: SelectionAutomata.STATE)
     }
 }

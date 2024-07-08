@@ -40,12 +40,7 @@ public class SelectionAutomata extends DialogOverView {
 
         selectionView = dialog.findViewById(R.id.text_selector);
         selectionView.setOnSelectionChangedListener(new SelectionView.OnSelectionChangedListener() {
-            @Override
-            public void updateDialog(int startX, int startY, int width, int height) {
-                if (state == STATE.END) {
-                    state = STATE.CANCELED;
-                }
-            }
+
 
             @Override
             public void onSelectionChanged(int startXX, int startYY, int widthh, int heightt, Rect newRectF) {
@@ -108,7 +103,11 @@ public class SelectionAutomata extends DialogOverView {
                     final Rect origin = originSelection;
                     rectF = origin;
                     dialog.setOnShowListener(dialog2 -> {
-                        selectedTextActions.show(text, origin);
+                        if (selectedTextActions == null){
+                            selectedTextActions = new SelectedTextActions(activity, dialog);
+                        }else {
+                            selectedTextActions.show(text, origin);
+                        }
                         dialog.setOnShowListener(null);
                     });
                     startSelection(true, false, true);
@@ -116,7 +115,11 @@ public class SelectionAutomata extends DialogOverView {
                 } else {
                     textWhole = text;
                     rectF = originSelection;
-                    selectedTextActions.show(text, originSelection);
+                    if (selectedTextActions == null) {
+                        selectedTextActions = new SelectedTextActions(activity, dialog);
+                    } else {
+                        selectedTextActions.show(text, originSelection);
+                    }
                 }
             }
         } else {
@@ -140,7 +143,7 @@ public class SelectionAutomata extends DialogOverView {
         dialog.show();
         if (!quite) {
             String msg = activity.getResources().getString(isSingleWord ? R.string.msg_select_word : R.string.msg_select_text);
-            resetSelection();
+//            resetSelection();
             activity.showFastMessage(msg);
         }
         state = STATE.START;
@@ -181,6 +184,9 @@ public class SelectionAutomata extends DialogOverView {
         rectF = null; // Reset rectF
         selectionView.reset(); // Reset the SelectionView
         dialog.dismiss();
+        dialog.setOnShowListener(null);
+        selectionView.invalidate();
+        selectedTextActions = null;
     }
     public static List<PageAndSelection> getSelectionRectangle(int startX, int startY, int width, int height, boolean isSingleWord, PageLayoutManager pageLayoutManager) {
         Rect rect = getSelectionRect(startX, startY, width, height, isSingleWord);
