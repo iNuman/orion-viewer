@@ -84,6 +84,9 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
                 resetNextState()
                 onTouchEvent = true
             }
+            if (e.action == MotionEvent.ACTION_DOWN) {
+                selectionAutomata.resetSelection() // Add this line
+            }
             if (state == State.DOUBLE_TAP)  {
                 resetNextState()
                 onTouchEvent = true
@@ -115,6 +118,8 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
     protected open fun resetNextState() {
         log("resetNextState")
         nextState = State.UNDEFINED
+        selectionAutomata.resetSelection()
+
     }
 
     override fun onDown(e: MotionEvent): Boolean {
@@ -122,6 +127,7 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
         if (isFlingActiveOnDown) {
             flingAnim.cancel()
         }
+        selectionAutomata.resetSelection()
 
         log("onDown")
         return true

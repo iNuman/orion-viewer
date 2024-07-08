@@ -92,6 +92,30 @@ public class SelectedTextActions {
         popup.setOnDismissListener(originalDialog::dismiss);
     }
 
+    public void updatePosition(String text, Rect selectionRect) {
+        int[] locationOnScreen = new int[2];
+        originalDialog.getWindow().getDecorView().getLocationOnScreen(locationOnScreen);
+        int absoluteTop = selectionRect.top + locationOnScreen[1];
+        int absoluteBottom = selectionRect.bottom + locationOnScreen[1];
+
+        int x = selectionRect.left;
+        int y = 0;
+
+        int popupHeight = popup.getHeight();
+        int dialogHeight = originalDialog.getWindow().getDecorView().getHeight();
+        if (absoluteTop >= popupHeight + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5)) {
+            y = (int) (absoluteTop - popupHeight - OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 60));
+        } else if (absoluteBottom <= locationOnScreen[1] + dialogHeight * 4 / 5) {
+            y = (int) (absoluteBottom + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5));
+        } else {
+            y = absoluteTop + (selectionRect.height() - popupHeight) / 2;
+        }
+
+        y -= locationOnScreen[1];
+        this.text = text;
+        popup.update(x, y, -1, -1);
+    }
+
     public void show(String text, Rect selectionRect) {
         int x = selectionRect.left, y = 0;
         System.out.println(selectionRect);

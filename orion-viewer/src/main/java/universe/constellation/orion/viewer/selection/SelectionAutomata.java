@@ -19,7 +19,7 @@ import universe.constellation.orion.viewer.view.PageLayoutManager;
 
 public class SelectionAutomata extends DialogOverView {
 
-    private enum STATE {START, MOVING, END, CANCELED}
+    public enum STATE {START, MOVING, END, CANCELED}
 
     private final static int SINGLE_WORD_AREA = 2;
 
@@ -32,6 +32,8 @@ public class SelectionAutomata extends DialogOverView {
 
     private boolean isSingleWord = false;
     private boolean translate = false;
+    private String textWhole;
+    private SelectedTextActions selectedTextActions;
 
     public SelectionAutomata(final OrionViewerActivity activity) {
         super(activity, universe.constellation.orion.viewer.R.layout.text_selector, android.R.style.Theme_Translucent_NoTitleBar);
@@ -40,78 +42,34 @@ public class SelectionAutomata extends DialogOverView {
         selectionView.setOnSelectionChangedListener(new SelectionView.OnSelectionChangedListener() {
             @Override
             public void updateDialog(int startX, int startY, int width, int height) {
-//                selectionView.reset();
-//                dialog.dismiss();
+                if (state == STATE.END) {
+                    state = STATE.CANCELED;
+                }
             }
 
             @Override
             public void onSelectionChanged(int startXX, int startYY, int widthh, int heightt, Rect newRectF) {
-//                dialog.show();
                 startX = startXX;
                 startY = startYY;
                 width = widthh;
                 height = heightt;
-                Log.d("ffnet", "onSelectionChanged: default "+rectF);
-                Log.d("ffnet", "onSelectionChanged: new  "+newRectF);
-               rectF = newRectF;
+                rectF = newRectF;
                 selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
+
+            }
+
+            @Override
+            public void onStateChanged(STATE newState) {
+                state = newState;
+                if (state == STATE.END) {
+                    selectedTextActions.updatePosition(textWhole, rectF);
+                }
             }
         });
-//        selectionView.setOnTouchListener((v, event) -> SelectionAutomata.this.onTouch(event));
+
+        selectedTextActions = new SelectedTextActions(activity, dialog);
+
     }
-
-
-//
-//    public boolean onTouch(MotionEvent event) {
-//        int action = event.getAction();
-//        STATE oldState = state;
-//        boolean result = true;
-//        switch (state) {
-//            case START:
-//                if (action == MotionEvent.ACTION_DOWN) {
-//                    startX = (int) event.getX();
-//                    startY = (int) event.getY();
-//                    initialStartX = startX;
-//                    initialStartY = startY;
-//                    state = STATE.MOVING;
-//                    selectionView.reset();
-//                } else {
-//                    state = STATE.CANCELED;
-//                }
-//                break;
-//
-//            case MOVING:
-//                endX = (int) event.getX();
-//                endY = (int) event.getY();
-//                if (action == MotionEvent.ACTION_UP) {
-//                    state = STATE.END;
-//                } else {
-//                    selectionView.updateView(Math.min(initialStartX, endX), Math.min(initialStartY, endY), Math.max(initialStartX, endX), Math.max(initialStartY, endY));
-//                }
-//                break;
-//
-//            default:
-//                result = false;
-//        }
-//
-//        if (oldState != state) {
-//            switch (state) {
-//                case CANCELED:
-//                    dialog.dismiss();
-//                    break;
-//
-//                case END:
-//                    selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
-//                    break;
-//            }
-//        }
-//        return result;
-//    }
-
-
-//    public void updateSelection(int left, int top, int right, int bottom) {
-//        selectionView.updateView(left, top, right, bottom);
-//    }
 
     public void selectText(
             boolean isSingleWord, boolean translate, List<PageAndSelection> data, Rect originSelection
@@ -150,17 +108,20 @@ public class SelectionAutomata extends DialogOverView {
                     final Rect origin = originSelection;
                     rectF = origin;
                     dialog.setOnShowListener(dialog2 -> {
-                        new SelectedTextActions(activity, dialog).show(text, origin);
+                        selectedTextActions.show(text, origin);
                         dialog.setOnShowListener(null);
                     });
                     startSelection(true, false, true);
                     state = STATE.END;
                 } else {
-                    new SelectedTextActions(activity, dialog).show(text, originSelection);
+                    textWhole = text;
+                    rectF = originSelection;
+                    selectedTextActions.show(text, originSelection);
                 }
             }
         } else {
             dialog.dismiss();
+            resetSelection();
             activity.showFastMessage(R.string.warn_no_text_in_selection);
         }
     }
@@ -168,15 +129,18 @@ public class SelectionAutomata extends DialogOverView {
     public void startSelection(boolean isSingleWord, boolean translate) {
         startSelection(isSingleWord, translate, false);
     }
+
     public void startSelection(boolean isSingleWord, boolean translate, boolean quite) {
         selectionView.setColorFilter(activity.getFullScene().getColorStuff().getBackgroundPaint().getColorFilter());
         if (!quite) {
-            selectionView.reset();
+//            selectionView.reset();
+            resetSelection();
         }
         initDialogSize();
         dialog.show();
         if (!quite) {
             String msg = activity.getResources().getString(isSingleWord ? R.string.msg_select_word : R.string.msg_select_text);
+            resetSelection();
             activity.showFastMessage(msg);
         }
         state = STATE.START;
@@ -207,6 +171,17 @@ public class SelectionAutomata extends DialogOverView {
         return new Rect(startX, startY, startX + width, startY + height);
     }
 
+    public void resetSelection() {
+        state = STATE.CANCELED;
+        startX = 0;
+        startY = 0;
+        width = 0;
+        height = 0;
+        textWhole = null;
+        rectF = null; // Reset rectF
+        selectionView.reset(); // Reset the SelectionView
+        dialog.dismiss();
+    }
     public static List<PageAndSelection> getSelectionRectangle(int startX, int startY, int width, int height, boolean isSingleWord, PageLayoutManager pageLayoutManager) {
         Rect rect = getSelectionRect(startX, startY, width, height, isSingleWord);
         return pageLayoutManager.findPageAndPageRect(rect);

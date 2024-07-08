@@ -3,6 +3,8 @@ package universe.constellation.orion.viewer.dialog;
 import static universe.constellation.orion.viewer.LoggerKt.log;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,6 +22,7 @@ public class DialogOverView {
         this.activity = activity;
 
         dialog = new Dialog(activity, style);
+        dialog.setCanceledOnTouchOutside(true);
         dialog.setContentView(layoutId);
     }
 

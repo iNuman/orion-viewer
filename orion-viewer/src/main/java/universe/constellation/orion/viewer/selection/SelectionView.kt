@@ -42,6 +42,8 @@ class SelectionView : View {
     private var width: Int = 0
     private var height: Int = 0
 
+    private var state: SelectionAutomata.STATE = SelectionAutomata.STATE.CANCELED
+
     init {
         startHandleDrawable = ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_left)?.let {
             DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
@@ -98,6 +100,7 @@ class SelectionView : View {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                state = SelectionAutomata.STATE.START
                 if (isInsideHandle(event, startPoint)) {
                     startX = event.x.toInt()
                     startY = event.y.toInt()
@@ -108,10 +111,11 @@ class SelectionView : View {
                     startY = event.y.toInt()
                     isDraggingEnd = true
                     notifyDialogChanged()
-
                 }
+                onSelectionChangedListener?.onStateChanged(state)
             }
             MotionEvent.ACTION_MOVE -> {
+                state = SelectionAutomata.STATE.MOVING
                 if (isDraggingStart) {
                     startPoint.set(event.x, event.y)
                     val endX = event.x.toInt()
@@ -120,7 +124,6 @@ class SelectionView : View {
                     height = kotlin.math.abs(endY - startY)
                     updateView()
                     notifyDialogChanged()
-
                 } else if (isDraggingEnd) {
                     endPoint.set(event.x, event.y)
                     val endX = event.x.toInt()
@@ -129,15 +132,16 @@ class SelectionView : View {
                     height = kotlin.math.abs(endY - startY)
                     updateView()
                     notifyDialogChanged()
-
-
                 }
                 invalidate()
+                onSelectionChangedListener?.onStateChanged(state)
             }
             MotionEvent.ACTION_UP -> {
                 isDraggingStart = false
                 isDraggingEnd = false
+                state = SelectionAutomata.STATE.END
                 notifySelectionChanged()
+                onSelectionChangedListener?.onStateChanged(state)
             }
         }
         return true
@@ -156,14 +160,16 @@ class SelectionView : View {
     private fun notifySelectionChanged() {
         onSelectionChangedListener?.onSelectionChanged(startX, startY, width, height, oldRect)
     }
+
     private fun notifyDialogChanged() {
         onSelectionChangedListener?.updateDialog(startX, startY, width, height)
     }
 
-
     fun reset() {
         oldRect = null
         invalidate()
+        state = SelectionAutomata.STATE.CANCELED
+        onSelectionChangedListener?.onStateChanged(state)
     }
 
     fun setColorFilter(colorFilter: ColorFilter?) {
@@ -175,6 +181,7 @@ class SelectionView : View {
     interface OnSelectionChangedListener {
         fun onSelectionChanged(startX: Int, startY: Int, width: Int, height: Int, newRectF: Rect?)
         fun updateDialog(startX: Int, startY: Int, width: Int, height: Int)
+        fun onStateChanged(state: SelectionAutomata.STATE)
     }
 }
 
