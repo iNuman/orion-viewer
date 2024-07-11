@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Rect
 import android.widget.Toast
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
@@ -16,6 +17,7 @@ import universe.constellation.orion.viewer.prefs.GlobalOptions
 import universe.constellation.orion.viewer.prefs.OrionApplication.Companion.instance
 import universe.constellation.orion.viewer.prefs.OrionBookPreferencesActivityX
 import universe.constellation.orion.viewer.prefs.OrionPreferenceActivityX
+import universe.constellation.orion.viewer.dialog.HighlightTextDialog
 import universe.constellation.orion.viewer.util.ColorUtil.getColorMode
 
 enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVisible: Boolean = true) {
@@ -129,6 +131,22 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             parameter: Any?
         ) {
             activity.startSearch()
+        }
+    },
+
+    HIGHLIGHT(R.string.action_highlight_text, R.integer.action_highlight_text) {
+        override fun doAction(
+            controller: Controller?,
+            activity: OrionViewerActivity,
+            parameter: Any?,
+            rect: Rect
+        ) {
+
+            HighlightTextDialog(
+                activity,
+                parameter as String,
+                rect
+            )
         }
     },
 
@@ -536,6 +554,10 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
 
     open fun doAction(controller: Controller?, activity: OrionViewerActivity, parameter: Any?) {
         doAction(activity)
+    }
+
+    open fun doAction(controller: Controller?, activity: OrionViewerActivity, parameter: Any?, rect: Rect) {
+        doAction(controller, activity, parameter, rect)
     }
 
     open fun doAction(activity: OrionBaseActivity) {

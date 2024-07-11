@@ -14,6 +14,7 @@
     <!--new 19-->
     <integer name="action_page_layout">19</integer>
     <integer name="action_crop_page">5</integer>
+    <integer name="action_highlight_text">101</integer>
     <integer name="action_options_page">6</integer>
     <integer name="action_goto_page">7</integer>
     <integer name="action_rotation_page">8</integer>

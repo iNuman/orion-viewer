@@ -44,12 +44,14 @@ public class SelectionAutomata extends DialogOverView {
 
             @Override
             public void onSelectionChanged(int startXX, int startYY, int widthh, int heightt, Rect newRectF) {
-                startX = startXX;
-                startY = startYY;
-                width = widthh;
-                height = heightt;
-                rectF = newRectF;
-                selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
+                if (newRectF != null) {
+                    startX = startXX;
+                    startY = startYY;
+                    width = widthh;
+                    height = heightt;
+                    rectF = newRectF;
+                    selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
+                }
 
             }
 
@@ -63,7 +65,6 @@ public class SelectionAutomata extends DialogOverView {
         });
 
         selectedTextActions = new SelectedTextActions(activity, dialog);
-
     }
 
     public void selectText(

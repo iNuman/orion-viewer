@@ -23,8 +23,10 @@ public class SelectedTextActions {
     private final int height;
 
     private String text;
+    private Rect rectSelection;
 
     private final Dialog originalDialog;
+
 
     public SelectedTextActions(final OrionViewerActivity activity, final Dialog originalDialog) {
         height = activity.getView().getSceneHeight();
@@ -46,6 +48,8 @@ public class SelectedTextActions {
                 popup.dismiss();
                 ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText(text);
+                Action.HIGHLIGHT.doAction(activity.getController(), activity, text, rectSelection);
+
                 activity.showFastMessage("Copied to clipboard");
 
             }
@@ -93,6 +97,7 @@ public class SelectedTextActions {
     }
 
     public void updatePosition(String text, Rect selectionRect) {
+        rectSelection = selectionRect;
         int[] locationOnScreen = new int[2];
         originalDialog.getWindow().getDecorView().getLocationOnScreen(locationOnScreen);
         int absoluteTop = selectionRect.top + locationOnScreen[1];
@@ -117,6 +122,7 @@ public class SelectedTextActions {
     }
 
     public void show(String text, Rect selectionRect) {
+        rectSelection = selectionRect;
         int x = selectionRect.left, y = 0;
         System.out.println(selectionRect);
         // Calculate the height of the popup

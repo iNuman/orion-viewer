@@ -26,7 +26,7 @@ class SelectionView : View {
     }
 
     private var oldRect: Rect? = null
-    private val paint = Paint()
+    private var paint = Paint()
     private var isDraggingStart = false
     private var isDraggingEnd = false
     private var startHandleDrawable: Drawable? = null
@@ -41,26 +41,34 @@ class SelectionView : View {
     private var startY: Int = 0
     private var width: Int = 0
     private var height: Int = 0
+    private var canvass: Canvas? = null
 
     private var state: SelectionAutomata.STATE = SelectionAutomata.STATE.CANCELED
 
     init {
-        startHandleDrawable = ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_left)?.let {
-            DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
-        }
-        endHandleDrawable = ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_right)?.let {
-            DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
-        }
+        startHandleDrawable =
+            ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_left)?.let {
+                DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
+            }
+        endHandleDrawable =
+            ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_right)?.let {
+                DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
+            }
         handleSize = startHandleDrawable?.intrinsicWidth?.minus(24) ?: 0
         touchAreaSize = handleSize * 2
     }
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle)
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    )
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        canvass = canvas
         oldRect?.let {
             canvas.drawRect(it, paint)
             drawHandle(canvas, startHandleDrawable!!, startPoint, true)
@@ -69,7 +77,8 @@ class SelectionView : View {
     }
 
     private fun updateView() {
-        val newRect = Rect(startPoint.x.toInt(), startPoint.y.toInt(), endPoint.x.toInt(), endPoint.y.toInt())
+        val newRect =
+            Rect(startPoint.x.toInt(), startPoint.y.toInt(), endPoint.x.toInt(), endPoint.y.toInt())
         val invalidate = Rect(newRect)
         oldRect?.let {
             invalidate.union(it)
@@ -161,6 +170,9 @@ class SelectionView : View {
 
     fun reset() {
         oldRect = null
+        canvass = null
+        startX = 0
+        startY = 0
         invalidate()
         state = SelectionAutomata.STATE.CANCELED
         onSelectionChangedListener?.onStateChanged(state)

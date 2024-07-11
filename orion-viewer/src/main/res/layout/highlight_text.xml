@@ -5,12 +5,12 @@
     android:layout_height="fill_parent"
     android:background="@android:color/transparent">
 
-    <universe.constellation.orion.viewer.selection.SelectionView
+    <universe.constellation.orion.viewer.selection.HighlightSelectionView
         android:id="@+id/text_selector"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/transparent">
 
-    </universe.constellation.orion.viewer.selection.SelectionView>
+    </universe.constellation.orion.viewer.selection.HighlightSelectionView>
 
 </LinearLayout>

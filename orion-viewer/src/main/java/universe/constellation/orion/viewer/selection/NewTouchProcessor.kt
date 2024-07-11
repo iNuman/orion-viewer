@@ -9,9 +9,11 @@ import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.dynamicanimation.animation.FloatPropertyCompat
 import universe.constellation.orion.viewer.ContextAction
 import universe.constellation.orion.viewer.OrionViewerActivity
+import universe.constellation.orion.viewer.dialog.HighlightTextDialog
 import universe.constellation.orion.viewer.log
 import universe.constellation.orion.viewer.view.OrionDrawScene
 import universe.constellation.orion.viewer.dpToPixels
+import universe.constellation.orion.viewer.geometry.Rect
 import kotlin.math.abs
 
 enum class State {
@@ -73,7 +75,7 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
 
     init {
         detector.setIsLongpressEnabled(true)
-        detector.setOnDoubleTapListener(this)
+//        detector.setOnDoubleTapListener(this)
     }
 
     open fun onTouch(e: MotionEvent): Boolean {
