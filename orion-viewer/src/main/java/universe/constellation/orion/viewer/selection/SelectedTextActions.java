@@ -94,20 +94,41 @@ public class SelectedTextActions {
     }
 
     public void show(String text, RectF selectionRect) {
-        float x = selectionRect.left, y = 0;
+//        rectSelection = selectionRect;
+        int x = (int) selectionRect.left, y = 0;
         System.out.println(selectionRect);
-        if (selectionRect.bottom <= height * 4 /5) {
+        // Calculate the height of the popup
+        int popupHeight = popup.getHeight();
+
+        // Check if there's enough space above the selectionRect to show the popup
+        if (selectionRect.top >= popupHeight + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5)) {
+            y = (int) (selectionRect.top - popupHeight - OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 38));
+        } else if (selectionRect.bottom <= height * 4 / 5) {
             y = (int) (selectionRect.bottom + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5));
-        } else if (selectionRect.top >= height / 5) {
-            System.out.println("1 " + popup.getHeight());
-            y = (int) (selectionRect.top - OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 60));
         } else {
-            y = selectionRect.centerY();
+            y = (int) selectionRect.centerY();
         }
+
         this.text = text;
         View decorView = originalDialog.getWindow().getDecorView();
-        popup.showAsDropDown(decorView, (int) x, (int) (-decorView.getHeight() + y));
+        popup.showAsDropDown(decorView, x, y - decorView.getHeight());
     }
+
+//    public void show(String text, RectF selectionRect) {
+//        float x = selectionRect.left, y = 0;
+//        System.out.println(selectionRect);
+//        if (selectionRect.bottom <= height * 4 /5) {
+//            y = (int) (selectionRect.bottom + OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 5));
+//        } else if (selectionRect.top >= height / 5) {
+//            System.out.println("1 " + popup.getHeight());
+//            y = (int) (selectionRect.top - OrionBaseActivityKt.dpToPixels(originalDialog.getContext(), 60));
+//        } else {
+//            y = selectionRect.centerY();
+//        }
+//        this.text = text;
+//        View decorView = originalDialog.getWindow().getDecorView();
+//        popup.showAsDropDown(decorView, (int) x, (int) (-decorView.getHeight() + y));
+//    }
 
     public void dismissOnlyDialog() {
         popup.setOnDismissListener(null);
