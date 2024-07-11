@@ -38,6 +38,8 @@ class SelectionViewNew : View {
     private val start = Path()
 
     private val end = Path()
+    private var handleSize: Int = 0
+    private var touchAreaSize: Int = 0
 
     private val startDrawable =
         ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_left)?.let {
@@ -49,6 +51,11 @@ class SelectionViewNew : View {
             DrawableCompat.wrap(it).apply { DrawableCompat.setTint(this, -0xda8d54) }
         }
 
+    init {
+        handleSize = startDrawable?.intrinsicWidth?.minus(24) ?: 0
+        touchAreaSize = handleSize * 2
+    }
+    
     constructor(context: Context?) : super(context)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -77,8 +84,6 @@ class SelectionViewNew : View {
         endHandler?.let { handler ->
             drawHandlerDrawable(canvas, handler, endDrawable)
         }
-
-
     }
 
     private fun drawHandlerDrawable(canvas: Canvas, handler: Handler, drawable: Drawable?) {
@@ -97,15 +102,15 @@ class SelectionViewNew : View {
         }
     }
 
-
     fun setHandlers(startHandler: Handler, endHandler: Handler) {
         this.startHandler = startHandler
         this.endHandler = endHandler
-        println("" + startHandler + endHandler)
+        println("ffnet" + startHandler + endHandler)
     }
 
     fun updateView(rects: List<RectF>) {
-        this.rects = rects
+        this.rects = rects.distinct()
+        updateHandlerPositions()
         invalidate()
     }
 
@@ -121,7 +126,23 @@ class SelectionViewNew : View {
         paint.alpha = 64
         paint.strokeWidth = 0f
     }
+
+    private fun updateHandlerPositions() {
+        if (rects.isNotEmpty()) {
+            startHandler?.let { handler ->
+                val firstRect = rects.first()
+                handler.x = firstRect.left
+                handler.y = firstRect.top
+            }
+            endHandler?.let { handler ->
+                val lastRect = rects.last()
+                handler.x = lastRect.right
+                handler.y = lastRect.bottom
+            }
+        }
+    }
 }
+
 
 data class Handler(var x: Float, var y: Float, var triangleSize: Float, val isStart: Boolean)
 
