@@ -26,8 +26,11 @@ public class SelectedTextActions {
     private Rect rectSelection;
 
     private final Dialog originalDialog;
+    private OnRectangleHighlightListener onSelectionChangedListener = null;
 
-
+    public void setOnRectangleHighlightListener(OnRectangleHighlightListener listener) {
+        this.onSelectionChangedListener = listener;
+    }
     public SelectedTextActions(final OrionViewerActivity activity, final Dialog originalDialog) {
         height = activity.getView().getSceneHeight();
         this.originalDialog = originalDialog;
@@ -45,11 +48,11 @@ public class SelectedTextActions {
         ImageView copy_to_Clipboard = view.findViewById(R.id.stext_copy_to_clipboard);
         copy_to_Clipboard.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                popup.dismiss();
+                dismissOnlyDialog();
                 ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText(text);
-                Action.HIGHLIGHT.doAction(activity.getController(), activity, text, rectSelection);
-
+//                Action.HIGHLIGHT.doAction(activity.getController(), activity, text, rectSelection);
+                onSelectionChangedListener.onStateChanged(rectSelection);
                 activity.showFastMessage("Copied to clipboard");
 
             }
@@ -147,5 +150,9 @@ public class SelectedTextActions {
         popup.setOnDismissListener(null);
         popup.dismiss();
 
+    }
+
+    interface OnRectangleHighlightListener {
+        void onStateChanged(Rect rect);
     }
 }

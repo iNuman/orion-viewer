@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:background="@android:color/transparent">
 
     <universe.constellation.orion.viewer.selection.SelectionView
@@ -13,4 +14,10 @@
 
     </universe.constellation.orion.viewer.selection.SelectionView>
 
+    <universe.constellation.orion.viewer.selection.HighlightSelectionView
+        android:id="@+id/text_selector_highlight"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        android:background="@android:color/transparent"/>
 </LinearLayout>

@@ -46,7 +46,7 @@ class HighlightSelectionView : View {
         oldRect = rect
         paint.style = Paint.Style.FILL
         paint.color = Color.YELLOW
-        paint.alpha = 70
+        paint.alpha = 96
         canvass?.drawRect(rect, paint)
         invalidate(rect)
     }

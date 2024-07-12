@@ -147,6 +147,7 @@ class SelectionView : View {
                 isDraggingStart = false
                 isDraggingEnd = false
                 state = SelectionAutomata.STATE.END
+                updateView()
                 notifySelectionChanged()
                 onSelectionChangedListener?.onStateChanged(state)
             }
@@ -179,9 +180,9 @@ class SelectionView : View {
     }
 
     fun setColorFilter(colorFilter: ColorFilter?) {
-        paint.color = Color.BLACK
-        paint.colorFilter = colorFilter
-        paint.alpha = 64
+        paint.color = Color.BLUE
+//        paint.colorFilter = colorFilter
+        paint.alpha = 96
     }
 
     interface OnSelectionChangedListener {

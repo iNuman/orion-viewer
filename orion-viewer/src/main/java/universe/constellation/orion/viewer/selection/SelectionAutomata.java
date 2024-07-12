@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -29,6 +30,7 @@ public class SelectionAutomata extends DialogOverView {
 
     private Rect rectF;
     private final SelectionView selectionView;
+    private final HighlightSelectionView highlightSelectionView;
 
     private boolean isSingleWord = false;
     private boolean translate = false;
@@ -39,6 +41,7 @@ public class SelectionAutomata extends DialogOverView {
         super(activity, universe.constellation.orion.viewer.R.layout.text_selector, android.R.style.Theme_Translucent_NoTitleBar);
 
         selectionView = dialog.findViewById(R.id.text_selector);
+        highlightSelectionView = dialog.findViewById(R.id.text_selector_highlight);
         selectionView.setOnSelectionChangedListener(new SelectionView.OnSelectionChangedListener() {
 
 
@@ -49,8 +52,8 @@ public class SelectionAutomata extends DialogOverView {
                     startY = startYY;
                     width = widthh;
                     height = heightt;
+                    Log.d("ffmet", "onSelectionChanged: "+newRectF);
                     rectF = newRectF;
-                    selectedTextActions.dismissOnlyDialog();
                     selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
                 }
 
@@ -61,16 +64,36 @@ public class SelectionAutomata extends DialogOverView {
                 state = newState;
                 if (state == STATE.END) {
                     selectedTextActions.updatePosition(textWhole, rectF);
+                } else if (state == STATE.MOVING) {
+                    selectedTextActions.dismissOnlyDialog();
                 }
             }
         });
 
         selectedTextActions = new SelectedTextActions(activity, dialog);
+        selectedTextActions.setOnRectangleHighlightListener(rect -> {
+            if (rect == null) {
+                selectionView.setVisibility(View.GONE);
+                highlightSelectionView.setVisibility(View.VISIBLE);
+                highlightSelectionView.setHighlight(rectF);
+            } else {
+                selectionView.setVisibility(View.GONE);
+                highlightSelectionView.setVisibility(View.VISIBLE);
+                highlightSelectionView.setHighlight(rect);
+            }
+        });
+
+        highlightSelectionView.setOnClickListener(v -> {
+            highlightSelectionView.setVisibility(View.GONE);
+            selectionView.setVisibility(View.VISIBLE);
+            resetSelection();
+        });
     }
 
     public void selectText(
             boolean isSingleWord, boolean translate, List<PageAndSelection> data, Rect originSelection
     ) {
+
         StringBuilder sb = new StringBuilder();
         boolean first = true;
         Controller controller = activity.getController();
@@ -184,11 +207,11 @@ public class SelectionAutomata extends DialogOverView {
         height = 0;
         textWhole = null;
         rectF = null; // Reset rectF
-        selectionView.reset(); // Reset the SelectionView
+        selectionView.reset();
+        highlightSelectionView.reset();// Reset the SelectionView
         dialog.dismiss();
         dialog.setOnShowListener(null);
         selectionView.invalidate();
-        selectedTextActions = null;
     }
     public static List<PageAndSelection> getSelectionRectangle(int startX, int startY, int width, int height, boolean isSingleWord, PageLayoutManager pageLayoutManager) {
         Rect rect = getSelectionRect(startX, startY, width, height, isSingleWord);
