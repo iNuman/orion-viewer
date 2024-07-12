@@ -6,7 +6,6 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import universe.constellation.orion.viewer.BuildConfig
 import universe.constellation.orion.viewer.OrionViewerActivity
-import universe.constellation.orion.viewer.filemanager.fileExtension
 import universe.constellation.orion.viewer.prefs.GlobalOptions
 
 fun createTestViewerIntent(body: Intent.() -> Unit): Intent {
@@ -25,21 +24,6 @@ fun createTestViewerIntent(body: Intent.() -> Unit): Intent {
     }
 }
 
-fun createContentIntentWithGeneratedFile(fileName: String): Intent {
-    return createTestViewerIntent {
-        val uri = Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
-            .authority(universe.constellation.orion.viewer.test.BuildConfig.APPLICATION_ID + ".fileprovider")
-            .encodedPath(fileName).appendQueryParameter("displayName", fileName).build()
-
-        instrumentationContext.grantUriPermission(
-            BuildConfig.APPLICATION_ID,
-            uri,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        )
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileName.fileExtension)
-        setDataAndType(uri, mimeType)
-    }
-}
 
 fun BookFile.toOpenIntentWithNewUI(): Intent {
     return toOpenIntent {

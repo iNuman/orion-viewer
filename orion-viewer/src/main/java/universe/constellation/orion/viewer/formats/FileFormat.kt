@@ -3,8 +3,6 @@ package universe.constellation.orion.viewer.formats
 import android.content.ContentResolver
 import android.content.Intent
 import android.webkit.MimeTypeMap
-import universe.constellation.orion.viewer.filemanager.fileExtension
-import universe.constellation.orion.viewer.filemanager.fileExtensionLC
 import java.io.File
 import java.util.Locale
 
@@ -53,49 +51,6 @@ enum class FileFormats(val extensions: List<String>, vararg val mimeTypes: Strin
             entries.associate { it.mimeTypes.first() to it.extensions.first() }
         }
 
-        fun ContentResolver.getFileExtension(intent: Intent): String? {
-            return intent.getFileExtFromPath()?.takeIf { it.isSupportedFileExt }
-                ?: mimeType2Extension[getMimeType(intent) ?: return null]
-        }
-
-        fun ContentResolver.getMimeType(intent: Intent): String? {
-            val type = intent.type
-            if (type.isExplicit()) return type
-
-            val uri = intent.data ?: return "<intent/null_data>"
-            when (val scheme = intent.scheme) {
-                ContentResolver.SCHEME_CONTENT -> {
-                    val mimeTypeFromContent = getType(uri)
-                    return mimeTypeFromContent.takeIf { it.isExplicit() } ?: getMimeTypeFromExtension(
-                        MimeTypeMap.getFileExtensionFromUrl(uri.toString()) ?: return "<content/no_extension>"
-                    )
-                }
-                ContentResolver.SCHEME_FILE -> {
-                    val file = File(uri.path ?: return  "<file/no_path>")
-                    return getMimeTypeFromExtension(file.name.fileExtensionLC.takeIf { it.isNotBlank() } ?: return "<file/no_extension>")
-                }
-                else -> {
-                    return "<unknown_scheme/$scheme>"
-                }
-            }
-        }
-
-        fun Intent.getFileExtFromPath(): String? {
-            val uri = data ?: return null
-            when (scheme) {
-                ContentResolver.SCHEME_CONTENT -> {
-                    return MimeTypeMap.getFileExtensionFromUrl(uri.toString())
-
-                }
-                ContentResolver.SCHEME_FILE -> {
-                    val file = File(uri.path ?: return  null)
-                    return file.name.fileExtension.takeIf { it.isNotBlank() }
-                }
-                else -> {
-                    return null
-                }
-            }
-        }
 
         fun String?.isExplicit() = !this.isNullOrBlank() && !contains('*')
 

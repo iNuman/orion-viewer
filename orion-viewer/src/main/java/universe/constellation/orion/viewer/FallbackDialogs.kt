@@ -28,7 +28,6 @@ import universe.constellation.orion.viewer.android.isAtLeastKitkat
 import universe.constellation.orion.viewer.android.isContentScheme
 import universe.constellation.orion.viewer.android.isContentUri
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivity
-import universe.constellation.orion.viewer.formats.FileFormats.Companion.getFileExtension
 import java.io.File
 import java.util.Locale
 
@@ -172,7 +171,6 @@ open class FallbackDialogs {
             }
 
             R.string.fileopen_open_in_temporary_file -> {
-                saveContentInTmpFile(uri, activity, alertDialog, intent, activity, fileInfo)
             }
 
             R.string.fileopen_open_recent_files -> {
@@ -256,40 +254,7 @@ fun Context.cacheContentFolder(): File {
     return File(cacheDir, ContentResolver.SCHEME_CONTENT)
 }
 
-private fun saveContentInTmpFile(
-    uri: Uri,
-    myActivity: OrionViewerActivity,
-    dialog: DialogInterface,
-    intent: Intent,
-    activity: Activity,
-    fileInfo: FileInfo?
-) {
-    val extension = myActivity.contentResolver.getFileExtension(intent)
-    if (extension == null) {
-        dialog.dismiss()
-        //TODO proper message
-        myActivity.showErrorReportDialog(
-            myActivity.applicationContext.getString(R.string.crash_on_intent_opening_title),
-            myActivity.applicationContext.getString(R.string.crash_on_intent_opening_title),
-            intent
-        )
-        return
-    }
 
-    val toFile = activity.createTmpFile(fileInfo, extension)
-
-    myActivity.saveFileByUri(intent, uri, toFile.toUri()) {
-        dialog.dismiss()
-        myActivity.onNewIntentInternal(
-            Intent(Intent.ACTION_VIEW).apply {
-                setClass(myActivity.applicationContext, OrionViewerActivity::class.java)
-                data = Uri.fromFile(toFile)
-                addCategory(Intent.CATEGORY_DEFAULT)
-                putExtra(OrionViewerActivity.USER_INTENT, false)
-            }
-        )
-    }
-}
 
 internal fun Context.createTmpFile(fileInfo: FileInfo?, extension: String): File {
     val fileFolder = tmpContentFolderForFile(fileInfo)

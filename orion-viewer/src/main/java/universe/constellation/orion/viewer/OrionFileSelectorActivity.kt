@@ -31,16 +31,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import universe.constellation.orion.viewer.FallbackDialogs.Companion.saveFileByUri
 import universe.constellation.orion.viewer.Permissions.checkWritePermission
-import universe.constellation.orion.viewer.filemanager.FileChooserAdapter
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase
 import java.io.File
 import java.io.FilenameFilter
 import java.util.Locale
 
-class OrionSaveFileActivity : OrionFileManagerActivityBase(
-    false, FilenameFilter { dir, filename ->
-        File(dir, filename).isDirectory
-    }) {
+class OrionSaveFileActivity : OrionFileManagerActivityBase() {
 
     companion object {
         const val SUGGESTED_FILE_NAME = "SUGGESTED_FILE_NAME"
@@ -50,28 +46,6 @@ class OrionSaveFileActivity : OrionFileManagerActivityBase(
         super.onCreate(savedInstanceState)
 
         findViewById<View>(R.id.saveFileIdView).visibility = View.VISIBLE
-        findViewById<Button>(R.id.saveFile).setOnClickListener {
-            if (checkWritePermission(this)) {
-                val fileName = findViewById<TextView>(R.id.fileName).text.toString()
-                val currentFolder = (findViewById<ListView>(R.id.folderList).adapter as FileChooserAdapter).currentFolder
-                val targetFile = File(currentFolder, fileName)
-                if (targetFile.exists()) {
-                    if (targetFile.isDirectory) {
-                        AlertDialog.Builder(this).
-                        setMessage("Can't save file into '${targetFile.name}' because there is a directory with same name").
-                        setPositiveButton("OK") { _, _ -> }.show()
-                    }
-                    else {
-                        AlertDialog.Builder(this).
-                        setMessage("File '${targetFile.name}' already exists.\nDo you want to overwrite it?").
-                        setPositiveButton("Yes") { _, _ -> saveFile(targetFile) }.
-                        setNegativeButton("No") { _, _ -> }.show()
-                    }
-                } else {
-                    saveFile(targetFile)
-                }
-            }
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -96,11 +70,7 @@ class OrionSaveFileActivity : OrionFileManagerActivityBase(
     }
 }
 
-class OrionFileSelectorActivity : OrionFileManagerActivityBase(
-    false, FilenameFilter { dir, filename ->
-        File(dir, filename).isDirectory || filename.lowercase(Locale.getDefault()).endsWith(".xml")
-    }
-) {
+class OrionFileSelectorActivity : OrionFileManagerActivityBase() {
 
     override fun openFile(file: File) {
         val result = Intent()
