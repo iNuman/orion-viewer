@@ -107,7 +107,6 @@ class SelectionView : View {
     }
 
 
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -123,6 +122,7 @@ class SelectionView : View {
                 }
                 onSelectionChangedListener?.onStateChanged(state)
             }
+
             MotionEvent.ACTION_MOVE -> {
                 state = SelectionAutomata.STATE.MOVING
                 if (isDraggingStart) {
@@ -143,6 +143,7 @@ class SelectionView : View {
                 invalidate()
                 onSelectionChangedListener?.onStateChanged(state)
             }
+
             MotionEvent.ACTION_UP -> {
                 isDraggingStart = false
                 isDraggingEnd = false
@@ -180,8 +181,9 @@ class SelectionView : View {
     }
 
     fun setColorFilter(colorFilter: ColorFilter?) {
-        paint.color = Color.BLUE
-//        paint.colorFilter = colorFilter
+        val color = Color.parseColor("#87CEEB")
+        paint.color = color
+        paint.colorFilter = colorFilter
         paint.alpha = 96
     }
 

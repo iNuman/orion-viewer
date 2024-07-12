@@ -37,6 +37,6 @@ class MainMenuFragment : Fragment(R.layout.new_menu) {
     }
 
     private fun hide() {
-        (activity as OrionViewerActivity).hideMenu()
+//        (activity as OrionViewerActivity).hideMenu()
     }
 }

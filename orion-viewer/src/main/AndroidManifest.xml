@@ -143,18 +143,6 @@
                   android:theme="@style/Theme.Orion.Dark.NoActionBar"
                   android:icon="@drawable/orion"/>
 
-        <activity android:name=".prefs.OrionKeyBinderActivity" android:screenOrientation="behind"
-                  android:label="@string/pref_key_binder_desc"
-                  android:theme="@style/Theme.AppCompat"
-                  android:launchMode="singleTask"
-                  android:icon="@drawable/orion"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="universe.constellation.orion.viewer.KEY_MANAGER"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
         <activity android:name=".OrionHelpActivity"
                   android:theme="@style/Theme.AppCompat.NoActionBar"
                   android:label="@string/app_name"
@@ -186,11 +174,7 @@
         <activity android:name=".OrionBookmarkActivity" android:screenOrientation="behind"
                   android:theme="@style/Theme.AppCompat.NoActionBar"
                   android:label="@string/menu_bookmarks_text"/>
-
-        <activity android:name=".outline.OutlineActivity" android:screenOrientation="behind"
-                  android:theme="@style/Theme.AppCompat"
-                  android:label="Outlines"/>
-
+        
     </application>
 
 </manifest>

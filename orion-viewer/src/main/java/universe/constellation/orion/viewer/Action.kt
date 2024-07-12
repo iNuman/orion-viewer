@@ -12,7 +12,6 @@ import universe.constellation.orion.viewer.dialog.toDialogMargins
 import universe.constellation.orion.viewer.dialog.toMargins
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivity
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase.Companion.DONT_OPEN_RECENT_FILE
-import universe.constellation.orion.viewer.outline.showOutline
 import universe.constellation.orion.viewer.prefs.GlobalOptions
 import universe.constellation.orion.viewer.prefs.OrionApplication.Companion.instance
 import universe.constellation.orion.viewer.prefs.OrionBookPreferencesActivityX
@@ -37,7 +36,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             activity: OrionViewerActivity,
             parameter: Any?
         ) {
-            activity.showMenu()
+//            activity.showMenu()
         }
     },
 
@@ -120,7 +119,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             parameter: Any?
         ) {
             log("Show Outline...")
-            showOutline(controller!!, activity)
+//            showOutline(controller!!, activity)
         }
     },
 
@@ -189,7 +188,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             activity: OrionViewerActivity,
             parameter: Any?
         ) {
-            activity.showOrionDialog(OrionViewerActivity.ADD_BOOKMARK_SCREEN, this, parameter)
+//            activity.showOrionDialog(OrionViewerActivity.ADD_BOOKMARK_SCREEN, this, parameter)
         }
     },
 
@@ -259,7 +258,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             activity: OrionViewerActivity,
             parameter: Any?
         ) {
-            activity.showOrionDialog(OrionViewerActivity.ZOOM_SCREEN, null, null)
+//            activity.showOrionDialog(OrionViewerActivity.ZOOM_SCREEN, null, null)
         }
     },
 
@@ -275,7 +274,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             activity: OrionViewerActivity,
             parameter: Any?
         ) {
-            activity.showOrionDialog(OrionViewerActivity.CROP_SCREEN, null, null)
+//            activity.showOrionDialog(OrionViewerActivity.CROP_SCREEN, null, null)
         }
     },
 
@@ -285,7 +284,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             activity: OrionViewerActivity,
             parameter: Any?
         ) {
-            activity.showOrionDialog(OrionViewerActivity.PAGE_SCREEN, this, null)
+//            activity.showOrionDialog(OrionViewerActivity.PAGE_SCREEN, this, null)
         }
     },
 

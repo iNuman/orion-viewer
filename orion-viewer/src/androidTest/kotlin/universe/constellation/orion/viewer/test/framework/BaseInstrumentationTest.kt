@@ -114,7 +114,7 @@ abstract class BaseInstrumentationTest : BaseTest() {
 
     fun ActivityScenario<OrionViewerActivity>.openMenuAndSelect(id: Int, resId: Int) {
         val newUI = onActivityRes {
-            it.showMenu()
+//            it.showMenu()
             it.isNewUI
         }
         if (newUI) {

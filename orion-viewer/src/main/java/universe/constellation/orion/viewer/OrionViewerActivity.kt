@@ -132,7 +132,7 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         }
         processIntentAndCheckPermission(intent, true)
 
-        mainMenu = MainMenu(mainMenuLayout!!, this)
+//        mainMenu = MainMenu(mainMenuLayout!!, this)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -169,7 +169,7 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
     internal fun processIntentAndCheckPermission(intent: Intent, isUserIntent: Boolean = false) {
         log("Trying to open document by $intent...")
         analytics.onNewIntent(contentResolver, intent, isUserIntent, isNewUI)
-        showErrorPanel(false)
+//        showErrorPanel(false)
 
         if (!openAsTempTestBook) {
             //UGLY hack: otherwise Espresso can't recognize that it's test activity
@@ -218,26 +218,26 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
 
                 if (fileToOpen.length() == 0L) {
-                    showErrorAndErrorPanel(
-                        getString(R.string.crash_on_book_opening_title),
-                        resources.getString(
-                            R.string.fileopen_cant_open,
-                            getString(R.string.fileopen_file_is_emppty)
-                        ),
-                        intent,
-                        sendException = RuntimeException("Warning: empty file, host=" + fileInfo.uri.host)
-                    )
+//                    showErrorAndErrorPanel(
+//                        getString(R.string.crash_on_book_opening_title),
+//                        resources.getString(
+//                            R.string.fileopen_cant_open,
+//                            getString(R.string.fileopen_file_is_emppty)
+//                        ),
+//                        intent,
+//                        sendException = RuntimeException("Warning: empty file, host=" + fileInfo.uri.host)
+//                    )
                     return
                 }
 
                 openFile(fileToOpen)
                 myState = MyState.FINISHED
             } catch (e: Exception) {
-                showErrorAndErrorPanel(
-                    R.string.crash_on_intent_opening_title,
-                    R.string.crash_on_intent_opening_title,
-                    intent, e
-                )
+//                showErrorAndErrorPanel(
+//                    R.string.crash_on_intent_opening_title,
+//                    R.string.crash_on_intent_opening_title,
+//                    intent, e
+//                )
             }
 
         } else {
@@ -262,14 +262,14 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                     FileUtil.openFile(file)
                 }
             } catch (e: Exception) {
-                showErrorAndErrorPanel(
-                    getString(R.string.crash_on_book_opening_title),
-                    resources.getString(
-                        R.string.crash_on_book_opening_message_header_panel,
-                        file.name
-                    ),
-                    intent, e
-                )
+//                showErrorAndErrorPanel(
+//                    getString(R.string.crash_on_book_opening_title),
+//                    resources.getString(
+//                        R.string.crash_on_book_opening_message_header_panel,
+//                        file.name
+//                    ),
+//                    intent, e
+//                )
                 executor.close()
                 orionApplication.idlingRes.free()
                 analytics.errorDuringInitialFileOpen()
@@ -278,23 +278,23 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
             try {
                 if (!askPassword(newDocument)) {
-                    showErrorOrFallbackPanel(
-                        getString(R.string.crash_on_book_opening_encrypted),
-                        intent
-                    )
+//                    showErrorOrFallbackPanel(
+//                        getString(R.string.crash_on_book_opening_encrypted),
+//                        intent
+//                    )
                     return@launch
                 }
 
                 if (newDocument.pageCount == 0) {
-                    showErrorAndErrorPanel(
-                        getString(R.string.crash_on_book_opening_title),
-                        resources.getString(
-                            R.string.fileopen_cant_open,
-                            getString(R.string.fileopen_no_pages)
-                        ),
-                        intent,
-                        sendException = RuntimeException("Warning: no pages in doc, host=" + intent.data?.host)
-                    )
+//                    showErrorAndErrorPanel(
+//                        getString(R.string.crash_on_book_opening_title),
+//                        resources.getString(
+//                            R.string.fileopen_cant_open,
+//                            getString(R.string.fileopen_no_pages)
+//                        ),
+//                        intent,
+//                        sendException = RuntimeException("Warning: no pages in doc, host=" + intent.data?.host)
+//                    )
                     newDocument.destroy()
                     return@launch
                 }
@@ -323,7 +323,7 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
                 lastPageInfo1.totalPages = newDocument.pageCount
                 orionApplication.onNewBook(file.name)
-                invalidateOrHideMenu()
+//                invalidateOrHideMenu()
                 doOnLayout(lastPageInfo1)
                 analytics.fileOpenedSuccessfully(file)
             } catch (e: Exception) {
@@ -333,25 +333,25 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                     newDocument.destroy()
                 }
                 analytics.errorDuringInitialFileOpen()
-                showErrorAndErrorPanel(
-                    R.string.crash_on_book_opening_title,
-                    R.string.crash_on_book_opening_title,
-                    intent,
-                    e
-                )
+//                showErrorAndErrorPanel(
+//                    R.string.crash_on_book_opening_title,
+//                    R.string.crash_on_book_opening_title,
+//                    intent,
+//                    e
+//                )
             } finally {
                 orionApplication.idlingRes.free()
             }
         }
     }
 
-    private fun invalidateOrHideMenu() {
-        if (isNewUI) {
-            mainMenu.hideMenu()
-        } else {
-            invalidateOptionsMenu()
-        }
-    }
+//    private fun invalidateOrHideMenu() {
+//        if (isNewUI) {
+//            mainMenu.hideMenu()
+//        } else {
+//            invalidateOptionsMenu()
+//        }
+//    }
 
     private suspend fun loadBookParameters(
         rootJob: CompletableJob,
@@ -585,96 +585,96 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         globalOptions.saveRecentFiles()
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        log("onKeyUp key = " + keyCode + " " + event.isCanceled + " " + doTrack(keyCode))
-        if (event.isCanceled) {
-            log("Tracking = $keyCode")
-            return super.onKeyUp(keyCode, event)
-        }
+//    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+//        log("onKeyUp key = " + keyCode + " " + event.isCanceled + " " + doTrack(keyCode))
+//        if (event.isCanceled) {
+//            log("Tracking = $keyCode")
+//            return super.onKeyUp(keyCode, event)
+//        }
+//
+//        return processKey(keyCode, event, false) || super.onKeyUp(keyCode, event)
+//    }
 
-        return processKey(keyCode, event, false) || super.onKeyUp(keyCode, event)
-    }
+//    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+//        log("onKeyDown = " + keyCode + " " + event.isCanceled + " " + doTrack(keyCode))
+//        if (doTrack(keyCode)) {
+//            log("Tracking = $keyCode")
+//            event.startTracking()
+//            return true
+//        }
+//        return super.onKeyDown(keyCode, event)
+//    }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        log("onKeyDown = " + keyCode + " " + event.isCanceled + " " + doTrack(keyCode))
-        if (doTrack(keyCode)) {
-            log("Tracking = $keyCode")
-            event.startTracking()
-            return true
-        }
-        return super.onKeyDown(keyCode, event)
-    }
+//    private fun processKey(keyCode: Int, event: KeyEvent, isLong: Boolean): Boolean {
+//        log("key = $keyCode isLong = $isLong")
+//
+//        val actionCode = orionApplication.keyBindingPrefs.getInt(getPrefKey(keyCode, isLong), -1)
+//        if (actionCode != -1) {
+//            when (val action = Action.getAction(actionCode)) {
+//                Action.PREV, Action.NEXT -> {
+//                    changePage(if (action === Action.PREV) Device.PREV else Device.NEXT)
+//                    return true
+//                }
+//                Action.NONE -> {
+//                }
+//                else -> {
+//                    doAction(action)
+//                    return true
+//                }
+//            }
+//        }
+//
+//        val resultHolder = OperationHolder()
+//        if (device!!.onKeyUp(keyCode, event.isLongPress, resultHolder)) {
+//            changePage(resultHolder.value)
+//            return true
+//        }
+//        return false
+//    }
 
-    private fun processKey(keyCode: Int, event: KeyEvent, isLong: Boolean): Boolean {
-        log("key = $keyCode isLong = $isLong")
+//    override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
+//        return processKey(keyCode, event, true)
+//    }
 
-        val actionCode = orionApplication.keyBindingPrefs.getInt(getPrefKey(keyCode, isLong), -1)
-        if (actionCode != -1) {
-            when (val action = Action.getAction(actionCode)) {
-                Action.PREV, Action.NEXT -> {
-                    changePage(if (action === Action.PREV) Device.PREV else Device.NEXT)
-                    return true
-                }
-                Action.NONE -> {
-                }
-                else -> {
-                    doAction(action)
-                    return true
-                }
-            }
-        }
+//    private fun changePage(operation: Int) {
+//        val swapKeys = globalOptions.isSwapKeys
+//        val width = view.sceneWidth
+//        val height = view.sceneHeight
+//        val landscape = width > height || controller!!.rotation != 0 /*second condition for nook and alex*/
+//        if (controller != null) {
+//            if (operation == Device.NEXT && (!landscape || !swapKeys) || swapKeys && operation == Device.PREV && landscape) {
+//                controller!!.drawNext()
+//            } else {
+//                controller!!.drawPrev()
+//            }
+//        }
+//    }
 
-        val resultHolder = OperationHolder()
-        if (device!!.onKeyUp(keyCode, event.isLongPress, resultHolder)) {
-            changePage(resultHolder.value)
-            return true
-        }
-        return false
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        if (!isNewUI) {
+//            val disable = controller == null
+//            if (!disable) {
+//                menuInflater.inflate(R.menu.menu, menu)
+//            } else {
+//                menuInflater.inflate(R.menu.menu_disabled, menu)
+//            }
+//            if (!globalOptions.isActionBarVisible) {
+//                for (i in 0 until menu.size()) {
+//                    val item = menu.getItem(i)
+//                    item.setShowAsAction(SupportMenuItem.SHOW_AS_ACTION_NEVER)
+//                }
+//            }
+//        }
+//        return !isNewUI
+//    }
 
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
-        return processKey(keyCode, event, true)
-    }
-
-    private fun changePage(operation: Int) {
-        val swapKeys = globalOptions.isSwapKeys
-        val width = view.sceneWidth
-        val height = view.sceneHeight
-        val landscape = width > height || controller!!.rotation != 0 /*second condition for nook and alex*/
-        if (controller != null) {
-            if (operation == Device.NEXT && (!landscape || !swapKeys) || swapKeys && operation == Device.PREV && landscape) {
-                controller!!.drawNext()
-            } else {
-                controller!!.drawPrev()
-            }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (!isNewUI) {
-            val disable = controller == null
-            if (!disable) {
-                menuInflater.inflate(R.menu.menu, menu)
-            } else {
-                menuInflater.inflate(R.menu.menu_disabled, menu)
-            }
-            if (!globalOptions.isActionBarVisible) {
-                for (i in 0 until menu.size()) {
-                    val item = menu.getItem(i)
-                    item.setShowAsAction(SupportMenuItem.SHOW_AS_ACTION_NEVER)
-                }
-            }
-        }
-        return !isNewUI
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (doMenuAction(item.itemId)) {
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        if (doMenuAction(item.itemId)) {
+//            return true
+//        }
+//
+//        return super.onOptionsItemSelected(item)
+//    }
 
     internal fun doMenuAction(id: Int): Boolean {
         val action = when (id) {
@@ -702,50 +702,50 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         return true
     }
 
-    private fun createOptionDialog(screenId: Int): AppCompatDialog {
-        val dialog = if (CROP_SCREEN == screenId) {
-            create(this, controller!!.margins)
-        } else {
-            val dialog = AppCompatDialog(this)
-            dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setCanceledOnTouchOutside(true)
-
-            when (screenId) {
-                PAGE_SCREEN -> {
-                    dialog.setContentView(R.layout.goto_dialog)
-                    dialog.initGoToPageScreen()
-                }
-
-                ZOOM_SCREEN -> {
-                    dialog.setContentView(R.layout.zoom_dialog)
-                    dialog.initZoomScreen()
-                }
-
-                ADD_BOOKMARK_SCREEN -> {
-                    dialog.setContentView(R.layout.add_bookmark_dialog)
-                    dialog.initAddBookmarkScreen()
-                }
-
-                else -> errorInDebugOr("Unknown id = $screenId") { return dialog }
-            }
-
-            val displayWidth = resources.displayMetrics.widthPixels
-            val limitWidth = dpToPixels(750f)
-            val width = if (displayWidth > limitWidth) {
-                dpToPixels(700f)
-            } else {
-                WindowManager.LayoutParams.MATCH_PARENT
-            }
-
-            dialog.window?.setLayout(
-                width,
-                WindowManager.LayoutParams.WRAP_CONTENT
-            )
-            dialog
-        }
-
-        return dialog
-    }
+//    private fun createOptionDialog(screenId: Int): AppCompatDialog {
+//        val dialog = if (CROP_SCREEN == screenId) {
+//            create(this, controller!!.margins)
+//        } else {
+//            val dialog = AppCompatDialog(this)
+//            dialog.supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+//            dialog.setCanceledOnTouchOutside(true)
+//
+//            when (screenId) {
+//                PAGE_SCREEN -> {
+//                    dialog.setContentView(R.layout.goto_dialog)
+//                    dialog.initGoToPageScreen()
+//                }
+//
+//                ZOOM_SCREEN -> {
+//                    dialog.setContentView(R.layout.zoom_dialog)
+//                    dialog.initZoomScreen()
+//                }
+//
+//                ADD_BOOKMARK_SCREEN -> {
+//                    dialog.setContentView(R.layout.add_bookmark_dialog)
+//                    dialog.initAddBookmarkScreen()
+//                }
+//
+//                else -> errorInDebugOr("Unknown id = $screenId") { return dialog }
+//            }
+//
+//            val displayWidth = resources.displayMetrics.widthPixels
+//            val limitWidth = dpToPixels(750f)
+//            val width = if (displayWidth > limitWidth) {
+//                dpToPixels(700f)
+//            } else {
+//                WindowManager.LayoutParams.MATCH_PARENT
+//            }
+//
+//            dialog.window?.setLayout(
+//                width,
+//                WindowManager.LayoutParams.WRAP_CONTENT
+//            )
+//            dialog
+//        }
+//
+//        return dialog
+//    }
 
     fun doAction(actionCode: Int) {
         val action = Action.getAction(actionCode)
@@ -825,19 +825,19 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                     val inputFileIntentData = intent.data
                     if (data?.data != null && inputFileIntentData != null) {
                         analytics.action("saveAs")
-                        saveFileByUri(intent,
-                            inputFileIntentData,
-                            data.data!!,
-                            CoroutineExceptionHandler { _, exception ->
-                                showErrorAndErrorPanel(
-                                    R.string.error_on_file_saving_title,
-                                    R.string.error_on_file_saving_title,
-                                    intent,
-                                    exception
-                                )
-                            }) {
-                            onNewIntent(data)
-                        }
+//                        saveFileByUri(intent,
+//                            inputFileIntentData,
+//                            data.data!!,
+//                            CoroutineExceptionHandler { _, exception ->
+//                                showErrorAndErrorPanel(
+//                                    R.string.error_on_file_saving_title,
+//                                    R.string.error_on_file_saving_title,
+//                                    intent,
+//                                    exception
+//                                )
+//                            }) {
+//                            onNewIntent(data)
+//                        }
                         return
                     }
                 }
@@ -849,27 +849,27 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         }
     }
 
-    fun showOrionDialog(screenId: Int, action: Action?, parameter: Any?) {
-        if (screenId != -1) {
-            val dialog = createOptionDialog(screenId)
-
-            if (action === Action.ADD_BOOKMARK) {
-                val parameterText = parameter as String?
-
-                val page = controller!!.currentPage
-                val newText = orionApplication.getBookmarkAccessor()
-                    .selectExistingBookmark(bookId, page, parameterText)
-
-                val notOverride = parameterText == null || parameterText == newText
-                dialog.findMyViewById(R.id.warn_text_override).visibility =
-                    if (notOverride) View.GONE else View.VISIBLE
-
-                (dialog.findMyViewById(R.id.add_bookmark_text) as EditText).setText(if (notOverride) newText else parameterText)
-            }
-
-            dialog.show()
-        }
-    }
+//    fun showOrionDialog(screenId: Int, action: Action?, parameter: Any?) {
+//        if (screenId != -1) {
+//            val dialog = createOptionDialog(screenId)
+//
+//            if (action === Action.ADD_BOOKMARK) {
+//                val parameterText = parameter as String?
+//
+//                val page = controller!!.currentPage
+//                val newText = orionApplication.getBookmarkAccessor()
+//                    .selectExistingBookmark(bookId, page, parameterText)
+//
+//                val notOverride = parameterText == null || parameterText == newText
+//                dialog.findMyViewById(R.id.warn_text_override).visibility =
+//                    if (notOverride) View.GONE else View.VISIBLE
+//
+//                (dialog.findMyViewById(R.id.add_bookmark_text) as EditText).setText(if (notOverride) newText else parameterText)
+//            }
+//
+//            dialog.show()
+//        }
+//    }
 
 
     fun textSelectionMode(isSingleSelection: Boolean, translate: Boolean) {
@@ -959,105 +959,105 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         orionApplication.currentBookParameters = null
     }
 
-    fun showMenu() {
-        if (isNewUI) {
-            mainMenu.showMenu()
-        } else {
-            toolbar.showOverflowMenu()
-        }
-    }
+//    fun showMenu() {
+//        if (isNewUI) {
+//            mainMenu.showMenu()
+//        } else {
+//            toolbar.showOverflowMenu()
+//        }
+//    }
 
-    fun hideMenu() {
-        if (isNewUI) {
-            mainMenu.hideMenu()
-        }
-    }
+//    fun hideMenu() {
+//        if (isNewUI) {
+//            mainMenu.hideMenu()
+//        }
+//    }
 
-    internal fun showErrorAndErrorPanel(
-        dialogTitle: Int,
-        messageTitle: Int,
-        intent: Intent,
-        exception: Throwable? = null
-    ) {
-        showErrorAndErrorPanel(
-            resources.getString(dialogTitle),
-            resources.getString(messageTitle),
-            intent,
-            exception
-        )
-    }
+//    internal fun showErrorAndErrorPanel(
+//        dialogTitle: Int,
+//        messageTitle: Int,
+//        intent: Intent,
+//        exception: Throwable? = null
+//    ) {
+//        showErrorAndErrorPanel(
+//            resources.getString(dialogTitle),
+//            resources.getString(messageTitle),
+//            intent,
+//            exception
+//        )
+//    }
 
-    private fun showErrorAndErrorPanel(
-        dialogTitle: String,
-        message: String,
-        intent: Intent,
-        exception: Throwable? = null,
-        sendException: Throwable? = exception
-    ) {
-        val dialog = createThemedAlertBuilder()
-            .setPositiveButton(R.string.string_close) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setOnDismissListener {
-                analytics.dialog(SHOW_ERROR_PANEL_DIALOG, false)
-            }
-            .setTitle(dialogTitle)
-            .setMessage(message + if (exception != null) "\n\n" + exception.message else "")
-            .create()
-        dialog.show()
+//    private fun showErrorAndErrorPanel(
+//        dialogTitle: String,
+//        message: String,
+//        intent: Intent,
+//        exception: Throwable? = null,
+//        sendException: Throwable? = exception
+//    ) {
+//        val dialog = createThemedAlertBuilder()
+//            .setPositiveButton(R.string.string_close) { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .setOnDismissListener {
+//                analytics.dialog(SHOW_ERROR_PANEL_DIALOG, false)
+//            }
+//            .setTitle(dialogTitle)
+//            .setMessage(message + if (exception != null) "\n\n" + exception.message else "")
+//            .create()
+//        dialog.show()
+//
+//        if (sendException != null) {
+//            log(sendException)
+//            analytics.error(sendException, "$message $intent")
+//        } else {
+//            logError("$message $intent")
+//            analytics.logWarning("$message $intent")
+//        }
+//
+//        showErrorOrFallbackPanel(message, intent, null, exception = exception)
+//    }
 
-        if (sendException != null) {
-            log(sendException)
-            analytics.error(sendException, "$message $intent")
-        } else {
-            logError("$message $intent")
-            analytics.logWarning("$message $intent")
-        }
+//    fun showErrorOrFallbackPanel(
+//        message: String,
+//        intent: Intent,
+//        info: String? = null,
+//        cause: String? = null,
+//        exception: Throwable? = null
+//    ) {
+//        val problemView = findViewById<View>(R.id.problem_view)
+//        problemView.findViewById<TextView>(R.id.crash_message_header).text = message
+//        problemView.findViewById<TextView>(R.id.crash_intent_message).text = intent.toString()
+//        problemView.findViewById<TextView>(R.id.crash_cause_message).text =
+//            cause ?: prepareFullErrorMessage(
+//                intent,
+//                info,
+//                exception,
+//                false,
+//                false
+//            ).takeIf { it.isNotBlank() } ?: "<Absent>"
+//
+//        problemView.findViewById<TextView>(R.id.crash_exception_message).text =
+//            exception?.stackTraceToString() ?: "<Absent>"
+//
+//        showErrorPanel(true)
+//
+//        problemView.findViewById<ImageView>(R.id.crash_close).setOnClickListener {
+//            Action.CLOSE_ACTION.doAction(this)
+//        }
+//        problemView.findViewById<ImageView>(R.id.crash_open_book).setOnClickListener {
+//            Action.OPEN_BOOK.doAction(this)
+//        }
+//    }
 
-        showErrorOrFallbackPanel(message, intent, null, exception = exception)
-    }
-
-    fun showErrorOrFallbackPanel(
-        message: String,
-        intent: Intent,
-        info: String? = null,
-        cause: String? = null,
-        exception: Throwable? = null
-    ) {
-        val problemView = findViewById<View>(R.id.problem_view)
-        problemView.findViewById<TextView>(R.id.crash_message_header).text = message
-        problemView.findViewById<TextView>(R.id.crash_intent_message).text = intent.toString()
-        problemView.findViewById<TextView>(R.id.crash_cause_message).text =
-            cause ?: prepareFullErrorMessage(
-                intent,
-                info,
-                exception,
-                false,
-                false
-            ).takeIf { it.isNotBlank() } ?: "<Absent>"
-
-        problemView.findViewById<TextView>(R.id.crash_exception_message).text =
-            exception?.stackTraceToString() ?: "<Absent>"
-
-        showErrorPanel(true)
-
-        problemView.findViewById<ImageView>(R.id.crash_close).setOnClickListener {
-            Action.CLOSE_ACTION.doAction(this)
-        }
-        problemView.findViewById<ImageView>(R.id.crash_open_book).setOnClickListener {
-            Action.OPEN_BOOK.doAction(this)
-        }
-    }
-
-    private fun showErrorPanel(show: Boolean) {
-        invalidateOptionsMenu()
-        findViewById<View>(R.id.orion_full_scene)!!.visibility =
-            if (!show) View.VISIBLE else View.INVISIBLE
-        findViewById<View>(R.id.problem_view)!!.visibility = if (show) View.VISIBLE else View.GONE
-        if (show) {
-            view.pageLayoutManager = null
-        }
-    }
+//    private fun showErrorPanel(show: Boolean) {
+//        invalidateOptionsMenu()
+//        findViewById<View>(R.id.orion_full_scene)!!.visibility =
+//            if (!show) View.VISIBLE else View.INVISIBLE
+//        findViewById<View>(R.id.problem_view)!!.visibility = if (show) View.VISIBLE else View.GONE
+//        if (show) {
+//            view.pageLayoutManager = null
+//        }
+//    }
 
     companion object {
 
