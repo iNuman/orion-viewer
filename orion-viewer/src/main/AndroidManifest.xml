@@ -143,11 +143,6 @@
                   android:theme="@style/Theme.Orion.Dark.NoActionBar"
                   android:icon="@drawable/orion"/>
 
-        <activity android:name=".OrionHelpActivity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar"
-                  android:label="@string/app_name"
-                  android:launchMode="standard"
-                  android:icon="@drawable/orion"/>
 
         <activity android:name=".prefs.OrionPreferenceActivityX"
             android:theme="@style/Theme.AppCompat"
@@ -171,10 +166,7 @@
                   android:theme="@style/Theme.AppCompat"
                   android:label="Action List"/>
 
-        <activity android:name=".OrionBookmarkActivity" android:screenOrientation="behind"
-                  android:theme="@style/Theme.AppCompat.NoActionBar"
-                  android:label="@string/menu_bookmarks_text"/>
-        
+
     </application>
 
 </manifest>

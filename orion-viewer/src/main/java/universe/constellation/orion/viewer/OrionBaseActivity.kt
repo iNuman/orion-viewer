@@ -205,12 +205,6 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
         }
     }
 
-    internal fun openHelpActivity(itemId: Int) {
-        val intent = Intent()
-        intent.setClass(this, OrionHelpActivity::class.java)
-        intent.putExtra(OrionHelpActivity.OPEN_ABOUT_TAB, itemId == R.id.about_menu_item)
-        startActivity(intent)
-    }
 }
 
 fun Activity.getVectorDrawable(id: Int, color: Int = 0): Drawable {

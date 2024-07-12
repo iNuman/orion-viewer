@@ -47,7 +47,6 @@ import universe.constellation.orion.viewer.LastPageInfo
 import universe.constellation.orion.viewer.OrionViewerActivity
 import universe.constellation.orion.viewer.R
 import universe.constellation.orion.viewer.analytics.Analytics
-import universe.constellation.orion.viewer.bookmarks.BookmarkAccessor
 import universe.constellation.orion.viewer.device.AndroidDevice
 import universe.constellation.orion.viewer.device.MagicBookBoeyeDevice
 import universe.constellation.orion.viewer.device.OnyxDevice
@@ -84,7 +83,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
     var tempOptions: TemporaryOptions? = null
         private set
 
-    private var bookmarkAccessor: BookmarkAccessor? = null
 
     var viewActivity: OrionViewerActivity? = null
 
@@ -166,25 +164,12 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         }
     }
 
-    fun getBookmarkAccessor(): BookmarkAccessor {
-        if (bookmarkAccessor == null) {
-            bookmarkAccessor = BookmarkAccessor(this)
-        }
-        return bookmarkAccessor!!
-    }
 
     fun destroyMainActivity() {
-        destroyDb()
         viewActivity = null
         currentBookParameters = null
     }
 
-    private fun destroyDb() {
-        if (bookmarkAccessor != null) {
-            bookmarkAccessor!!.close()
-            bookmarkAccessor = null
-        }
-    }
 
     //temporary hack
     fun processBookOptionChange(key: String, value: Any) {

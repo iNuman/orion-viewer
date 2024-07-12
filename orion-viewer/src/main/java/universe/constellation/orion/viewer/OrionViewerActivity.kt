@@ -64,7 +64,7 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
     @JvmField
     var _isResumed: Boolean = false
 
-     val selectionAutomata: SelectionAutomata by lazy {
+    val selectionAutomata: SelectionAutomata by lazy {
         SelectionAutomata(this)
     }
 
@@ -84,18 +84,18 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
     var isNewUI: Boolean = false
         private set
 
-    val bookId: Long
-        get() {
-            log("Selecting book id...")
-            val info = lastPageInfo!!
-            var bookId: Long? = orionApplication.tempOptions!!.bookId
-            if (bookId == null || bookId == -1L) {
-                bookId = orionApplication.getBookmarkAccessor().selectBookId(info.simpleFileName, info.fileSize)
-                orionApplication.tempOptions!!.bookId = bookId
-            }
-            log("...book id = $bookId")
-            return bookId
-        }
+//    val bookId: Long
+//        get() {
+//            log("Selecting book id...")
+//            val info = lastPageInfo!!
+//            var bookId: Long? = orionApplication.tempOptions!!.bookId
+//            if (bookId == null || bookId == -1L) {
+//                bookId = orionApplication.getBookmarkAccessor().selectBookId(info.simpleFileName, info.fileSize)
+//                orionApplication.tempOptions!!.bookId = bookId
+//            }
+//            log("...book id = $bookId")
+//            return bookId
+//        }
 
     @SuppressLint("MissingSuperCall")
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,18 +108,27 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
         val view = findViewById<OrionDrawScene>(R.id.view)
 
-        fullScene = FullScene(findViewById<View>(R.id.orion_full_scene) as ViewGroup, view, findViewById<View>(R.id.orion_status_bar) as ViewGroup, this)
+        fullScene = FullScene(
+            findViewById<View>(R.id.orion_full_scene) as ViewGroup,
+            view,
+            findViewById<View>(R.id.orion_status_bar) as ViewGroup,
+            this
+        )
         fullScene.setDrawOffPage(globalOptions.isDrawOffPage)
 
         newTouchProcessor = NewTouchProcessorWithScale(view, this)
-        view.setOnTouchListener{ _, event ->
+        view.setOnTouchListener { _, event ->
             newTouchProcessor!!.onTouch(event)
         }
         processIntentAndCheckPermission(intent, true)
 
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray,
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (ASK_READ_PERMISSION_FOR_BOOK_OPEN == requestCode) {
             println("Permission callback $requestCode...")
@@ -178,7 +187,12 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                     lastPageInfo?.apply {
                         if (openingFileName == filePath) {
                             log("Fast processing")
-                            controller!!.drawPage(pageNumber, newOffsetX, newOffsetY, controller!!.pageLayoutManager.isSinglePageMode)
+                            controller!!.drawPage(
+                                pageNumber,
+                                newOffsetX,
+                                newOffsetY,
+                                controller!!.pageLayoutManager.isSinglePageMode
+                            )
                             return
                         }
                     }
@@ -250,7 +264,13 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                 }
 
                 val layoutStrategy = SimpleLayoutStrategy.create()
-                val controller1 = Controller(this@OrionViewerActivity, newDocument, layoutStrategy, rootJob, context = executor)
+                val controller1 = Controller(
+                    this@OrionViewerActivity,
+                    newDocument,
+                    layoutStrategy,
+                    rootJob,
+                    context = executor
+                )
 
 
                 val lastPageInfo1 = loadBookParameters(rootJob, file)
@@ -262,7 +282,8 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                 bind(view, controller1)
                 controller1.changeOrinatation(lastPageInfo1.screenOrientation)
 
-                updateViewOnNewBook((newDocument.title?.takeIf { it.isNotBlank() } ?: file.name.substringBeforeLast(".")))
+                updateViewOnNewBook((newDocument.title?.takeIf { it.isNotBlank() }
+                    ?: file.name.substringBeforeLast(".")))
 
                 val drawView = fullScene.drawView
                 controller1.init(lastPageInfo1, drawView.sceneWidth, drawView.sceneHeight)
@@ -291,7 +312,7 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
     private suspend fun loadBookParameters(
         rootJob: CompletableJob,
-        bookFile: File
+        bookFile: File,
     ): LastPageInfo {
         if (openAsTempTestBook) {
             return loadBookParameters(
@@ -401,16 +422,15 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         }
     }
 
-    private fun insertOrGetBookId(): Long {
-        val info = lastPageInfo!!
-        var bookId: Long? = orionApplication.tempOptions!!.bookId
-        if (bookId == null || bookId == -1L) {
-            bookId = orionApplication.getBookmarkAccessor()
-                .insertOrUpdate(info.simpleFileName, info.fileSize)
-            orionApplication.tempOptions!!.bookId = bookId
-        }
-        return bookId.toInt().toLong()
-    }
+//    private fun insertOrGetBookId(): Long {
+//        val info = lastPageInfo!!
+//        var bookId: Long? = orionApplication.tempOptions!!.bookId
+//        if (bookId == null || bookId == -1L) {
+//            bookId = orionApplication.getBookmarkAccessor().insertOrUpdate(info.simpleFileName, info.fileSize)
+//            orionApplication.tempOptions!!.bookId = bookId
+//        }
+//        return bookId.toInt().toLong()
+//    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -420,12 +440,9 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
             OPEN_BOOKMARK_ACTIVITY_RESULT -> {
                 if (resultCode == Activity.RESULT_OK) {
                     if (controller != null) {
-                        val page = data!!.getIntExtra(OrionBookmarkActivity.OPEN_PAGE, -1)
-                        if (page != -1) {
-                            controller!!.drawPage(page)
-                        } else {
-                            doAction(Action.GOTO)
-                        }
+
+                        doAction(Action.GOTO)
+
                     }
                 }
             }
@@ -449,7 +466,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
     fun textSelectionMode(isSingleSelection: Boolean, translate: Boolean) {
         selectionAutomata.startSelection(isSingleSelection, translate)
     }
-
 
 
     private suspend fun askPassword(controller: Document): Boolean {

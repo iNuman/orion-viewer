@@ -198,12 +198,12 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             activity: OrionViewerActivity,
             parameter: Any?
         ) {
-            val bookmark = Intent(activity.applicationContext, OrionBookmarkActivity::class.java)
-            bookmark.putExtra(OrionBookmarkActivity.BOOK_ID, activity.bookId)
-            activity.startActivityForResult(
-                bookmark,
-                OrionViewerActivity.OPEN_BOOKMARK_ACTIVITY_RESULT
-            )
+//            val bookmark = Intent(activity.applicationContext, OrionBookmarkActivity::class.java)
+//            bookmark.putExtra(OrionBookmarkActivity.BOOK_ID, activity.bookId)
+//            activity.startActivityForResult(
+//                bookmark,
+//                OrionViewerActivity.OPEN_BOOKMARK_ACTIVITY_RESULT
+//            )
         }
     },
 

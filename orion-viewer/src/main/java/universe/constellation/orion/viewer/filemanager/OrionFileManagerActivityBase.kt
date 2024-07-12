@@ -1,6 +1,7 @@
 package universe.constellation.orion.viewer.filemanager
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -19,7 +20,6 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import universe.constellation.orion.viewer.OrionBaseActivity
-import universe.constellation.orion.viewer.OrionHelpActivity
 import universe.constellation.orion.viewer.OrionViewerActivity
 import universe.constellation.orion.viewer.Permissions
 import universe.constellation.orion.viewer.Permissions.checkAndRequestStorageAccessPermissionOrReadOne
@@ -29,7 +29,11 @@ import universe.constellation.orion.viewer.android.isAtLeastKitkat
 import universe.constellation.orion.viewer.getVectorDrawable
 import universe.constellation.orion.viewer.log
 import java.io.File
+import java.io.FileOutputStream
 import java.io.FilenameFilter
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 internal val DIRECTORY_DOCUMENTS = if (isAtLeastKitkat()) Environment.DIRECTORY_DOCUMENTS else "Documents"
 
@@ -214,6 +218,28 @@ abstract class OrionFileManagerActivityBase @JvmOverloads constructor(
         openFile(Uri.fromFile(file))
     }
 
+
+    open fun copyFileFromAssetsToInternal(context: Context, assetFileName: String): String? {
+        val inputStream: InputStream
+        val outputStream: OutputStream
+        try {
+            inputStream = context.assets.open(assetFileName)
+            val outputFile = File(context.filesDir, assetFileName)
+            outputStream = FileOutputStream(outputFile)
+            val buffer = ByteArray(1024)
+            var length: Int
+            while (inputStream.read(buffer).also { length = it } > 0) {
+                outputStream.write(buffer, 0, length)
+            }
+            outputStream.flush()
+            outputStream.close()
+            inputStream.close()
+            return outputFile.absolutePath
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
     private fun initFileManager() {
         val viewPager = findViewById<ViewPager>(R.id.viewpager)
         val addSupportTab = this@OrionFileManagerActivityBase is OrionFileManagerActivity
@@ -223,7 +249,7 @@ abstract class OrionFileManagerActivityBase @JvmOverloads constructor(
             }
 
             if (addSupportTab) {
-                addFragment(OrionHelpActivity.ContributionFragment())
+//                addFragment(OrionHelpActivity.ContributionFragment())
             }
         }
 

@@ -32,7 +32,7 @@ class ActionBarDrawerToggle(
                 return true
             }
             R.id.help_menu_item, R.id.about_menu_item -> {
-                activity.openHelpActivity(itemId)
+//                activity.openHelpActivity(itemId)
                 return true
             }
             R.id.nav_settings -> {
