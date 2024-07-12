@@ -20,7 +20,6 @@ package universe.constellation.orion.viewer.prefs
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import universe.constellation.orion.viewer.OptionActions
 import universe.constellation.orion.viewer.PageOptions
 import universe.constellation.orion.viewer.PageWalker
 import universe.constellation.orion.viewer.R
@@ -66,17 +65,17 @@ class GlobalOptions(
                 val activity = context.viewActivity
                 if (activity != null) {
                     if (SCREEN_OVERLAPPING_HORIZONTAL == name) {
-                        OptionActions.SCREEN_OVERLAPPING_HORIZONTAL.doAction(
-                            activity,
-                            horizontalOverlapping,
-                            verticalOverlapping
-                        )
+//                        OptionActions.SCREEN_OVERLAPPING_HORIZONTAL.doAction(
+//                            activity,
+//                            horizontalOverlapping,
+//                            verticalOverlapping
+//                        )
                     } else if (SCREEN_OVERLAPPING_VERTICAL == name) {
-                        OptionActions.SCREEN_OVERLAPPING_VERTICAL.doAction(
-                            activity,
-                            horizontalOverlapping,
-                            verticalOverlapping
-                        )
+//                        OptionActions.SCREEN_OVERLAPPING_VERTICAL.doAction(
+//                            activity,
+//                            horizontalOverlapping,
+//                            verticalOverlapping
+//                        )
                     } else if (APP_LANGUAGE == name) {
                         context.setLanguage(appLanguage)
                     } else if (DRAW_OFF_PAGE == name) {

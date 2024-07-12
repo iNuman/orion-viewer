@@ -84,8 +84,8 @@ public class SearchDialog extends DialogFragment {
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.TOP;
         OrionViewerActivity orionViewerActivity = requireOrionActivity();
-        int toolbarHeight = orionViewerActivity.isNewUI() ? 0 : orionViewerActivity.getToolbar().getHeight();
-        wlp.y = toolbarHeight + 5;
+//        int toolbarHeight = orionViewerActivity.isNewUI() ? 0 : orionViewerActivity.getToolbar().getHeight();
+//        wlp.y = toolbarHeight + 5;
 
         window.setAttributes(wlp);
         window.setBackgroundDrawable(new ColorDrawable(ALPHA));

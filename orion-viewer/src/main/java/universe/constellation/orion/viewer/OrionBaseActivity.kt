@@ -70,7 +70,7 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
     }
 
     @JvmOverloads
-    protected fun onOrionCreate(savedInstanceState: Bundle?, layoutId: Int, addToolbar: Boolean = true, displayHomeAsUpEnabled: Boolean = false) {
+    protected fun onOrionCreate(savedInstanceState: Bundle?, layoutId: Int, addToolbar: Boolean = false, displayHomeAsUpEnabled: Boolean = false) {
         orionApplication.applyTheme(this)
         orionApplication.updateLanguage(resources)
 
@@ -87,30 +87,30 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
             setContentView(layoutId)
             if (addToolbar) {
                 toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-                setSupportActionBar(toolbar)
-                if (displayHomeAsUpEnabled) {
-                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                }
-                val tintColor = MaterialColors.getColor(toolbar, R.attr.navIconTint)
-                toolbar.getOverflowIcon()?.apply {
-                    DrawableCompat.setTint(this, tintColor)
-                }
-                toolbar.navigationIcon?.apply {
-                    DrawableCompat.setTint(this, tintColor)
-                }
+//                setSupportActionBar(toolbar)
+//                if (displayHomeAsUpEnabled) {
+//                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//                }
+//                val tintColor = MaterialColors.getColor(toolbar, R.attr.navIconTint)
+//                toolbar.getOverflowIcon()?.apply {
+//                    DrawableCompat.setTint(this, tintColor)
+//                }
+//                toolbar.navigationIcon?.apply {
+//                    DrawableCompat.setTint(this, tintColor)
+//                }
             }
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                super.onBackPressed()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            android.R.id.home -> {
+//                super.onBackPressed()
+//                return true
+//            }
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     override fun onDestroy() {
         super.onDestroy()

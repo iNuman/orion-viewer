@@ -81,7 +81,7 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
     private var openAsTempTestBook = false
 
-    internal lateinit var mainMenu: MainMenu
+//    internal lateinit var mainMenu: MainMenu
 
     var isNewUI: Boolean = false
         private set
@@ -105,21 +105,21 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         openAsTempTestBook = updateGlobalOptionsFromIntent(intent)
         isNewUI = globalOptions.isNewUI
         orionApplication.viewActivity = this
-        globalOptions.FULL_SCREEN.observe(this) { flag ->
-            OptionActions.FULL_SCREEN.doAction(this, flag)
-        }
+//        globalOptions.FULL_SCREEN.observe(this) { flag ->
+//            OptionActions.FULL_SCREEN.doAction(this, flag)
+//        }
         onOrionCreate(savedInstanceState, R.layout.main_view, !isNewUI)
 
-        val mainMenuLayout = findViewById<LinearLayout>(R.id.main_menu)
+//        val mainMenuLayout = findViewById<LinearLayout>(R.id.main_menu)
 
-        if (!isNewUI) {
-            globalOptions.SHOW_ACTION_BAR.observe(this) { flag ->
-                OptionActions.SHOW_ACTION_BAR.doAction(this, flag)
-            }
-            findViewById<ViewGroup>(R.id.main_menu)?.visibility = View.GONE
-        } else {
-            findViewById<View>(R.id.toolbar)?.visibility = View.GONE
-        }
+//        if (!isNewUI) {
+//            globalOptions.SHOW_ACTION_BAR.observe(this) { flag ->
+//                OptionActions.SHOW_ACTION_BAR.doAction(this, flag)
+//            }
+//            findViewById<ViewGroup>(R.id.main_menu)?.visibility = View.GONE
+//        } else {
+//            findViewById<View>(R.id.toolbar)?.visibility = View.GONE
+//        }
 
         val view = findViewById<OrionDrawScene>(R.id.view)
 
@@ -395,159 +395,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         statusBarHelper.onPause(this)
     }
 
-    private fun AppCompatDialog.initGoToPageScreen() {
-        val pageSeeker = findMyViewById(R.id.page_picker_seeker) as SeekBar
-        val pageNumberText = findMyViewById(R.id.page_picker_message) as TextView
-        val plus = findMyViewById(R.id.page_picker_plus) as ImageButton
-        val minus = findMyViewById(R.id.page_picker_minus) as ImageButton
-        initPageNavControls(this@OrionViewerActivity, pageSeeker, minus, plus, pageNumberText)
-        initPageNavigationValues(controller, pageSeeker, pageNumberText)
-        pageNumberText.text = ((controller?.currentPage ?: 0) + 1).toString()
-
-        val closePagePeeker = findMyViewById(R.id.option_dialog_bottom_close) as ImageButton
-        closePagePeeker.setOnClickListener {
-            dismiss()
-        }
-
-        val pagePreview = findMyViewById(R.id.option_dialog_bottom_apply) as ImageButton
-        pagePreview.setOnClickListener {
-            if (pageNumberText.text.isNotEmpty()) {
-                try {
-                    val userPage = Integer.valueOf(pageNumberText.text.toString())
-                    val newPage = MathUtils.clamp(userPage, 1, controller!!.pageCount)
-                    if (newPage != controller?.currentPage) {
-                        controller?.drawPage(newPage - 1, isTapNavigation = true)
-                        pageSeeker.progress = newPage - 1
-                    }
-                    dismiss()
-                } catch (ex: NumberFormatException) {
-                    showAndLogError(this@OrionViewerActivity, "Couldn't parse " + pageNumberText.text, ex)
-                }
-            }
-        }
-        pageNumberText.requestFocus()
-    }
-
-    private fun AppCompatDialog.initZoomScreen() {
-        //zoom screen
-        val spinner = findMyViewById(R.id.zoom_spinner) as Spinner
-        val zoomValueAsText = findMyViewById(R.id.zoom_picker_message) as EditText
-        val zoomSeek = findMyViewById(R.id.zoom_picker_seeker) as SeekBar
-        zoomSeek.max = 300
-        zoomSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                zoomValueAsText.setText("$progress")
-                if (spinner.selectedItemPosition != 0) {
-                    spinner.setSelection(0)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
-        })
-
-        val zoomPlus = findMyViewById(R.id.zoom_picker_plus) as ImageButton
-        zoomPlus.setOnClickListener { zoomSeek.incrementProgressBy(1) }
-
-        val zoomMinus = findMyViewById(R.id.zoom_picker_minus) as ImageButton
-        zoomMinus.setOnClickListener {
-            if (zoomSeek.progress != 0) {
-                zoomSeek.incrementProgressBy(-1)
-            }
-        }
-
-        val closeZoomPicker = findMyViewById(R.id.option_dialog_bottom_close) as ImageButton
-        closeZoomPicker.setOnClickListener {
-            dismiss()
-        }
-
-        val zoomPreview = findMyViewById(R.id.option_dialog_bottom_apply) as ImageButton
-        zoomPreview.setOnClickListener {
-            onApplyAction()
-            val index = spinner.selectedItemPosition
-            controller!!.changeZoom(if (index == 0) (java.lang.Float.parseFloat(zoomValueAsText.text.toString()) * 100).toInt() else -1 * (index - 1))
-        }
-
-        spinner.adapter = MyArrayAdapter(context)
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val disableChangeButtons = position != 0
-
-                if (disableChangeButtons) {
-                    zoomValueAsText.setText(parent.adapter.getItem(position) as String)
-                } else {
-                    zoomValueAsText.setText("${zoomSeek.progress}")
-                }
-
-                zoomMinus.visibility = if (disableChangeButtons) View.GONE else View.VISIBLE
-                zoomPlus.visibility = if (disableChangeButtons) View.GONE else View.VISIBLE
-
-                zoomValueAsText.isFocusable = !disableChangeButtons
-                zoomValueAsText.isFocusableInTouchMode = !disableChangeButtons
-
-                val parent1 = zoomValueAsText.parent as LinearLayout
-
-                parent1.post { parent1.requestLayout() }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }
-
-        //by width
-        spinner.setSelection(1)
-        actualizeZoomOptions()
-    }
-
-    private fun AppCompatDialog.actualizeZoomOptions() {
-        val zoomSeek = findMyViewById(R.id.zoom_picker_seeker) as SeekBar
-        val textView = findMyViewById(R.id.zoom_picker_message) as TextView
-        val spinner = findMyViewById(R.id.zoom_spinner) as Spinner
-
-        var zoom = controller!!.zoom10000Factor
-        val spinnerIndex: Int
-        if (zoom in -3..0) {
-            spinnerIndex = -zoom + 1
-            zoom = (10000 * controller!!.currentPageZoom).toInt()
-        } else {
-            spinnerIndex = 0
-            textView.text = (zoom / 100f).toString()
-        }
-        zoomSeek.progress = zoom / 100
-        spinner.setSelection(spinnerIndex)
-    }
-
-    private fun AppCompatDialog.initAddBookmarkScreen() {
-        val close = findMyViewById(R.id.option_dialog_bottom_close) as ImageButton
-        close.setOnClickListener {
-            //main menu
-            dismiss()
-        }
-
-
-        val view = findMyViewById(R.id.option_dialog_bottom_apply) as ImageButton
-        view.setOnClickListener {
-            val text = findMyViewById(R.id.add_bookmark_text) as EditText
-            try {
-                insertBookmark(controller!!.currentPage, text.text.toString())
-                dismiss()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                analytics.error(e)
-
-                //TODO show common error dialog
-                val buider = createThemedAlertBuilder()
-                buider.setTitle(resources.getString(R.string.ex_msg_operation_failed))
-                val input = EditText(this@OrionViewerActivity)
-                input.setText(e.message)
-                buider.setView(input)
-                buider.setNeutralButton("OK") { dialog, _ -> dialog.dismiss() }
-                buider.create().show()
-            }
-        }
-
-    }
 
     override fun onResume() {
         _isResumed = true
