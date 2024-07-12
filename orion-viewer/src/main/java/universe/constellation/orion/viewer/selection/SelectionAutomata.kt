@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.toRect
+import androidx.core.graphics.toRectF
 import universe.constellation.orion.viewer.Action
 import universe.constellation.orion.viewer.Controller
 import universe.constellation.orion.viewer.OrionViewerActivity
@@ -86,8 +87,7 @@ class SelectionAutomata(val activity: OrionViewerActivity) :
 
             STATE.ACTIVE_SELECTION -> {
                 if (action == MotionEvent.ACTION_DOWN) {
-                    activeHandler =
-                        selectionView.findClosestHandler(event.x, event.y, 0.8f * triangleSide)
+                    activeHandler = selectionView.findClosestHandler(event.x, event.y, 2f * triangleSide)
                     println(activeHandler)
                     if (activeHandler == null) {
                         state = STATE.CANCELED
@@ -159,6 +159,15 @@ class SelectionAutomata(val activity: OrionViewerActivity) :
         return result
     }
 
+    fun checkForTextAtLocation(x: Float, y: Float): Boolean {
+        val screenSelection = RectF(x, y, x, y)
+        val pageLayoutManager = activity.controller!!.pageLayoutManager
+        val pageSelectionRectangles = getPageSelectionRectangles(screenSelection, false, pageLayoutManager)
+        val textInfo = extractText(pageSelectionRectangles.map {
+            ExtractionInfo(it.page, it.absoluteRectWithoutCrop.toRectF(), it.pageView::getSceneRect)
+        },   false, isSingleWord = true, invertCheck = false)
+        return textInfo?.value?.isNotEmpty() == true
+    }
     private fun recordLastEvent(event: MotionEvent) {
         lastX = event.x
         lastY = event.y

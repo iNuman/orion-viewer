@@ -10,7 +10,12 @@ enum class ContextAction(customName: String? = null) {
         override fun doAction(activity: OrionViewerActivity, clickInfo: ClickInfo) {
             val pos = clickInfo as? ClickInfo ?: return
             val selectionAutomata = activity.selectionAutomata
-            selectionAutomata.initSelectionByPosition(pos, false)
+            val hasText = selectionAutomata.checkForTextAtLocation(pos.x.toFloat(), pos.y.toFloat())
+            if (hasText) {
+                selectionAutomata.initSelectionByPosition(pos, false)
+            } else {
+                activity.showFastMessage("No text found")
+            }
         }
     },
 

@@ -17,9 +17,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-private val sin15 = sin(15.0 / 180.0 * Math.PI).toFloat()
+private val sin15 = sin(15.0/180.0*Math.PI).toFloat()
 
-private val cos15 = cos(15.0 / 180.0 * Math.PI).toFloat()
+private val cos15 = cos(15.0/180.0*Math.PI).toFloat()
 
 private val sqrt6 = sqrt(6.0).toFloat()
 
@@ -40,6 +40,7 @@ class SelectionViewNew : View {
     private val end = Path()
     private var handleSize: Int = 0
     private var touchAreaSize: Int = 0
+    private var canvass: Canvas?= null
 
     private val startDrawable =
         ContextCompat.getDrawable(context!!, R.drawable.pspdf__text_select_handle_left)?.let {
@@ -69,20 +70,44 @@ class SelectionViewNew : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        canvass = canvas
         paint.style = Paint.Style.FILL
         paint.alpha = 96
         rects.forEach {
             canvas.drawRect(it, paint)
         }
 
-        paint.alpha = 128
+//        startHandler?.let { handler ->
+//            drawHandlerDrawable(canvas, handler, startDrawable)
+//        }
+//
+//        endHandler?.let { handler ->
+//            drawHandlerDrawable(canvas, handler, endDrawable)
+//        }
+
 
         startHandler?.let { handler ->
-            drawHandlerDrawable(canvas, handler, startDrawable)
+            canvas.drawPath(handlerPath(handler), paint)
         }
 
         endHandler?.let { handler ->
-            drawHandlerDrawable(canvas, handler, endDrawable)
+            canvas.drawPath(handlerPath(handler), paint)
+        }
+
+
+//        updateHandlerPositions()
+
+        startHandler?.let { startHandler ->
+            endHandler?.let { endHandler ->
+                val left = minOf(startHandler.x, endHandler.x)
+                val top = minOf(startHandler.y, endHandler.y)
+                val right = maxOf(startHandler.x, endHandler.x)
+                val bottom = maxOf(startHandler.y, endHandler.y)
+
+                paint.style = Paint.Style.STROKE
+                paint.alpha = 64
+                canvas.drawRect(left, top, right, bottom, paint)
+            }
         }
     }
 
@@ -90,8 +115,8 @@ class SelectionViewNew : View {
         drawable?.let {
             val x = handler.x
             val y = handler.y
-            val halfWidth = drawable.intrinsicWidth / 3
-            val halfHeight = drawable.intrinsicHeight / 3
+            val halfWidth = drawable.intrinsicWidth / 3.5
+            val halfHeight = drawable.intrinsicHeight / 3.5
             drawable.setBounds(
                 (x - halfWidth).toInt(),
                 (y - halfHeight).toInt(),
@@ -102,16 +127,58 @@ class SelectionViewNew : View {
         }
     }
 
+    private fun handlerPath(handler: Handler): Path {
+        val path = if (handler.isStart) start else end
+        path.reset()
+        val x = handler.x
+        val y = handler.y
+        val r = if (handler.isStart) handler.triangleSize else -handler.triangleSize
+        path.moveTo(x, y)
+        path.lineTo(x - r * sin15, y - r * cos15)
+        path.lineTo(x - r * cos15, y - r * sin15)
+        path.lineTo(x, y)
+        path.close()
+        return path
+    }
+
     fun setHandlers(startHandler: Handler, endHandler: Handler) {
         this.startHandler = startHandler
         this.endHandler = endHandler
         println("ffnet" + startHandler + endHandler)
     }
 
-    fun updateView(rects: List<RectF>) {
-        this.rects = rects.distinct()
-        updateHandlerPositions()
+    fun updateView(lineRects: List<RectF>) {
+        this.rects = mergeRects(lineRects.distinct())
+//        this.rects = lineRects.distinct()
         invalidate()
+    }
+
+    private fun mergeRects(rects: List<RectF>): List<RectF> {
+        if (rects.isEmpty()) return emptyList()
+
+        val sortedRects = rects.sortedBy { it.left } // Sort by left edge for horizontal merging
+        val mergedRects = mutableListOf<RectF>()
+        var currentRect = RectF(sortedRects[0])
+
+        for (rect in sortedRects.drop(1)) {
+            if (currentRect.intersectsHorizontally(rect) || isAdjacentHorizontally(currentRect, rect)) {
+                currentRect.union(rect)
+            } else {mergedRects.add(currentRect)
+                currentRect = RectF(rect)
+            }
+        }
+
+        mergedRects.add(currentRect)
+        return mergedRects
+    }
+
+    // Helper functions for horizontal checks
+    private fun RectF.intersectsHorizontally(other: RectF): Boolean {
+        return (left <= other.right && other.left <= right)
+    }
+
+    private fun isAdjacentHorizontally(rect1: RectF, rect2: RectF): Boolean {
+        return rect1.right >= rect2.left || rect1.left <= rect2.right
     }
 
     fun reset() {
@@ -124,20 +191,24 @@ class SelectionViewNew : View {
         paint.color = 0x147494
         paint.colorFilter = colorFilter
         paint.alpha = 64
-        paint.strokeWidth = 0f
+        paint.strokeWidth = 2f
     }
 
     private fun updateHandlerPositions() {
         if (rects.isNotEmpty()) {
             startHandler?.let { handler ->
                 val firstRect = rects.first()
-                handler.x = firstRect.left
-                handler.y = firstRect.top
+                handler.x = firstRect.left-18
+                handler.y = firstRect.top+20
+//                canvass?.let { drawHandlerDrawable(it, handler, startDrawable) }
+
             }
             endHandler?.let { handler ->
                 val lastRect = rects.last()
-                handler.x = lastRect.right
+                handler.x = lastRect.right+19
                 handler.y = lastRect.bottom
+//                canvass?.let { drawHandlerDrawable(it, handler, endDrawable) }
+
             }
         }
     }
@@ -155,7 +226,7 @@ fun SelectionViewNew.findClosestHandler(x: Float, y: Float, trashHold: Float): H
 }
 
 fun Handler.distance(x: Float, y: Float): Float {
-    var delta = -triangleSize * sqrt6 / 4 / 2
+    var delta = - triangleSize * sqrt6 / 4 / 2
     if (!isStart) delta = -delta
     val x1 = this.x + delta
     val y1 = this.y + delta
