@@ -142,4 +142,10 @@ public class SelectedTextActions {
         popup.showAsDropDown(decorView, x, y - decorView.getHeight());
     }
 
+
+    public void dismissOnlyDialog() {
+        popup.setOnDismissListener(null);
+        popup.dismiss();
+
+    }
 }

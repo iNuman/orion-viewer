@@ -50,6 +50,7 @@ public class SelectionAutomata extends DialogOverView {
                     width = widthh;
                     height = heightt;
                     rectF = newRectF;
+                    selectedTextActions.dismissOnlyDialog();
                     selectText(isSingleWord, translate, getSelectionRectangle(), getScreenSelectionRect());
                 }
 
