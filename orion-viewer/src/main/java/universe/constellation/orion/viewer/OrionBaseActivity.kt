@@ -79,42 +79,11 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
             setContentView(layoutId)
             if (addToolbar) {
                 toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-//                setSupportActionBar(toolbar)
-//                if (displayHomeAsUpEnabled) {
-//                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-//                }
-//                val tintColor = MaterialColors.getColor(toolbar, R.attr.navIconTint)
-//                toolbar.getOverflowIcon()?.apply {
-//                    DrawableCompat.setTint(this, tintColor)
-//                }
-//                toolbar.navigationIcon?.apply {
-//                    DrawableCompat.setTint(this, tintColor)
-//                }
             }
         }
     }
 
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        device?.onDestroy()
-//    }
-//
-//    override fun onWindowFocusChanged(hasFocus: Boolean) {
-//        if (hasFocus) {
-//            device?.onWindowGainFocus()
-//        }
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        device?.onPause()
-//    }
-//
-//    override fun onUserInteraction() {
-//        super.onUserInteraction()
-//        device?.onUserInteraction()
-//    }
 
     fun showWarning(warning: String) {
         Toast.makeText(this, warning, Toast.LENGTH_SHORT).show()
@@ -189,12 +158,6 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
 
     protected fun doTrack(keyCode: Int): Boolean {
         return keyCode != KeyEvent.KEYCODE_MENU && keyCode != KeyEvent.KEYCODE_BACK
-    }
-
-    protected fun checkPermissionGranted(grantResults: IntArray, permissions: Array<String>, checkPermission: String): Boolean {
-        return grantResults.zip(permissions).any { (grantResult, permission) ->
-            checkPermission == permission && grantResult == PackageManager.PERMISSION_GRANTED
-        }
     }
 
 }

@@ -30,7 +30,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import universe.constellation.orion.viewer.FallbackDialogs.Companion.saveFileByUri
-import universe.constellation.orion.viewer.Permissions.checkWritePermission
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase
 import java.io.File
 import java.io.FilenameFilter
@@ -54,7 +53,6 @@ class OrionSaveFileActivity : OrionFileManagerActivityBase() {
                 findViewById<TextView>(R.id.fileName).text = name
             }
         }
-        checkWritePermission(this)
     }
 
     private fun saveFile(targetFile: File) {

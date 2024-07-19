@@ -89,10 +89,6 @@ class GlobalOptions(
         prefs.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
     }
 
-
-    val lastOpenedDirectory: String?
-        get() = getNullableStringProperty(OrionFileManagerActivity.LAST_OPENED_DIRECTORY, null)
-
     fun addRecentEntry(newEntry: RecentEntry) {
         recentFiles.remove(newEntry)
         recentFiles.add(0, newEntry)
@@ -100,11 +96,6 @@ class GlobalOptions(
         if (recentFiles.size > MAX_RECENT_ENTRIES) {
             recentFiles.removeLast()
         }
-    }
-
-    fun removeRecentEntry(toRemove: RecentEntry) {
-        recentFiles.remove(toRemove)
-        saveRecentFiles()
     }
 
     fun saveRecentFiles() {
@@ -129,10 +120,6 @@ class GlobalOptions(
         }
     }
 
-
-    val isSwapKeys: Boolean
-        get() = getBooleanProperty(SWAP_KEYS, false)
-
     val isEnableTouchMove: Boolean
         get() = getBooleanProperty(ENABLE_TOUCH_MOVE, true)
 
@@ -151,32 +138,20 @@ class GlobalOptions(
     val isDrawOffPage: Boolean
         get() = true //getBooleanProperty(DRAW_OFF_PAGE, instance.device !is EInkDevice)
 
-    val isActionBarVisible: Boolean
-        get() = getBooleanProperty(SHOW_ACTION_BAR.key, SHOW_ACTION_BAR.defaultValue)
-
-    val isShowTapHelp: Boolean
-        get() = getBooleanProperty(SHOW_TAP_HELP, true)
-
     val isNewUI: Boolean
         get() = !getBooleanProperty(OLD_UI, false)
 
     fun getActionCode(i: Int, j: Int, isLong: Boolean): Int {
-        val key = OrionTapActivity.getKey(i, j, isLong)
-        var code = getInt(key, -1)
-        if (code == -1) {
-            code = getInt(key, OrionTapActivity.getDefaultAction(i, j, isLong))
-        }
-        return code
+//        val key = OrionTapActivity.getKey(i, j, isLong)
+//        var code = getInt(key, -1)
+//        if (code == -1) {
+//            code = getInt(key, OrionTapActivity.getDefaultAction(i, j, isLong))
+//        }
+        return -1
     }
 
     val dictionary: String
         get() = getStringProperty(DICTIONARY, "FORA")
-
-    val einkRefreshAfter: Int
-        get() = getIntFromStringProperty(EINK_TOTAL_AFTER, 10)
-
-    val isEinkOptimization: Boolean
-        get() = getBooleanProperty(EINK_OPTIMIZATION, false)
 
     val longCrop: Int
         get() = getIntFromStringProperty(LONG_CROP_VALUE, 10)
@@ -193,10 +168,6 @@ class GlobalOptions(
     val isCustomBrightness: Boolean
         get() = getBooleanProperty(CUSTOM_BRIGHTNESS, false)
 
-    val isOpenRecentBook: Boolean
-        get() = getBooleanProperty(OPEN_RECENT_BOOK, false)
-
-
     val applicationTheme: String
         get() = getStringProperty(APPLICATION_THEME, APPLICATION_THEME_DEFAULT)
 
@@ -211,12 +182,6 @@ class GlobalOptions(
 
     val colorMode: String
         get() = getStringProperty(COLOR_MODE, "CM_NORMAL")
-
-    val SCREEN_BACKLIGHT_TIMEOUT = pref("SCREEN_BACKLIGHT_TIMEOUT", 10, stringAsInt = true)
-
-    val FULL_SCREEN= pref("FULL_SCREEN", false)
-
-    val SHOW_ACTION_BAR = pref(Companion.SHOW_ACTION_BAR, true)
 
     val LONG_TAP_ACTION = pref(Companion.LONG_TAP_ACTION, context.resources.getString(R.string.action_key_select_text_new))
 
@@ -243,19 +208,13 @@ class GlobalOptions(
 
         private const val RECENT_PREFIX = "recent_"
 
-        const val SWAP_KEYS: String = "SWAP_KEYS"
-
         const val DEFAULT_ZOOM: String = "DEFAULT_ZOOM"
 
         const val DEFAULT_CONTRAST: String = "DEFAULT_CONTRAST_3"
 
         const val APPLY_AND_CLOSE: String = "APPLY_AND_CLOSE"
 
-        const val FULL_SCREEN: String = "FULL_SCREEN"
-
         const val DRAW_OFF_PAGE: String = "DRAW_OFF_PAGE"
-
-        const val SHOW_ACTION_BAR: String = "SHOW_ACTION_BAR"
 
         const val DOUBLE_TAP_ACTION: String = "DOUBLE_TAP_ACTION"
 
@@ -273,13 +232,7 @@ class GlobalOptions(
 
         const val SHOW_TIME_ON_STATUS_BAR: String = "SHOW_TIME_ON_STATUS_BAR"
 
-        const val TAP_ZONE: String = "TAP_ZONE"
-
         const val SCREEN_ORIENTATION: String = "SCREEN_ORIENTATION"
-
-        const val EINK_OPTIMIZATION: String = "EINK_OPTIMIZATION"
-
-        const val EINK_TOTAL_AFTER: String = "EINK_TOTAL_AFTER"
 
         const val DICTIONARY: String = "DICTIONARY"
 
@@ -300,10 +253,6 @@ class GlobalOptions(
         const val APPLICATION_THEME_DEFAULT: String = "DEFAULT"
 
         const val APP_LANGUAGE: String = "LANGUAGE"
-
-        const val OPEN_RECENT_BOOK: String = "OPEN_RECENT_BOOK"
-
-        const val DAY_NIGHT_MODE: String = "DAY_NIGHT_MODE"
 
         const val WALK_ORDER: String = "WALK_ORDER"
 

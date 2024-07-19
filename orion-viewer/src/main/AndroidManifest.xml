@@ -1,46 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Orion Viewer - pdf, djvu, xps and cbz file viewer for android devices
-  ~
-  ~ Copyright (C) 2011-2012  Michael Bogdanov
-  ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-
-    <queries>
-        <intent>
-            <action android:name="android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION" />
-        </intent>
-    </queries>
 
     <supports-screens
-            android:xlargeScreens="true"
-            android:largeScreens="true"
-            android:normalScreens="true"
-            android:smallScreens="true"
-            android:anyDensity="true"/>
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
 
     <application
         android:name=".prefs.OrionApplication"
@@ -49,65 +23,64 @@
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true">
 
-        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
-        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
-        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
-
-        <activity android:name=".OrionViewerActivity"
-                  android:label="@string/app_name"
-                  android:theme="@style/Theme.Orion.Dark.NoActionBar"
-                  android:launchMode="singleTask"
-                  android:icon="@drawable/orion" android:configChanges="orientation|locale|screenSize|keyboardHidden"
-                  android:windowSoftInputMode="adjustPan"
-            android:exported="true">
+        <activity
+            android:name=".OrionViewerActivity"
+            android:configChanges="orientation|locale|screenSize|keyboardHidden"
+            android:exported="true"
+            android:icon="@drawable/orion"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Orion.Dark.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
 
             <intent-filter>
-                <action android:name="com.bravo.intent.action.VIEW"/>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.bravo.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW" />
 
-                <data android:scheme="file"/>
-                <data android:scheme="content"/>
-                <data android:mimeType="image/vnd.djvu"/>
-                <data android:mimeType="image/x-djvu"/>
-                <data android:mimeType="image/djvu"/>
-                <data android:mimeType="application/djvu"/>
-                <data android:mimeType="application/vnd.djvu"/>
-                <data android:mimeType="application/pdf"/>
-                <data android:mimeType="application/vnd.ms-xpsdocument"/>
-                <data android:mimeType="application/oxps"/>
-                <data android:mimeType="application/xps"/>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="image/vnd.djvu" />
+                <data android:mimeType="image/x-djvu" />
+                <data android:mimeType="image/djvu" />
+                <data android:mimeType="application/djvu" />
+                <data android:mimeType="application/vnd.djvu" />
+                <data android:mimeType="application/pdf" />
+                <data android:mimeType="application/vnd.ms-xpsdocument" />
+                <data android:mimeType="application/oxps" />
+                <data android:mimeType="application/xps" />
                 <data android:mimeType="application/vnd.comicbook+zip" />
-                <data android:mimeType="application/x-cbz"/>
-                <data android:mimeType="application/vnd.comicbook-rar"/>
-                <data android:mimeType="application/x-cbr"/>
-                <data android:mimeType="application/x-cbt"/>
-<!--                <data android:mimeType="application/x-cb7"/>-->
+                <data android:mimeType="application/x-cbz" />
+                <data android:mimeType="application/vnd.comicbook-rar" />
+                <data android:mimeType="application/x-cbr" />
+                <data android:mimeType="application/x-cbt" />
+                <!--                <data android:mimeType="application/x-cb7"/>-->
 
                 <!--images-->
-                <data android:mimeType="image/tiff"/>
-                <data android:mimeType="image/x-tiff"/>
-                <data android:mimeType="image/png"/>
-                <data android:mimeType="image/jpeg"/>
-                <data android:mimeType="image/pjpeg"/>
+                <data android:mimeType="image/tiff" />
+                <data android:mimeType="image/x-tiff" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/pjpeg" />
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:host="*"/>
-                <data android:scheme="file"/>
-                <data android:scheme="content"/>
-                <data android:pathPattern=".*\\.djvu"/>
-                <data android:pathPattern=".*\\.djv"/>
-                <data android:pathPattern=".*\\.pdf"/>
-                <data android:pathPattern=".*\\.xps"/>
-                <data android:pathPattern=".*\\.oxps"/>
-                <data android:pathPattern=".*\\.cbz"/>
-                <data android:pathPattern=".*\\.cbr"/>
-                <data android:pathPattern=".*\\.cbt"/>
-<!--                <data android:pathPattern=".*\\.cb7"/>-->
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:host="*" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:pathPattern=".*\\.djvu" />
+                <data android:pathPattern=".*\\.djv" />
+                <data android:pathPattern=".*\\.pdf" />
+                <data android:pathPattern=".*\\.xps" />
+                <data android:pathPattern=".*\\.oxps" />
+                <data android:pathPattern=".*\\.cbz" />
+                <data android:pathPattern=".*\\.cbr" />
+                <data android:pathPattern=".*\\.cbt" />
+                <!--                <data android:pathPattern=".*\\.cb7"/>-->
 
                 <!--images-->
                 <data android:pathPattern=".*\\.tiff" />
@@ -119,52 +92,20 @@
         </activity>
 
         <!--Important: use app label-->
-        <activity android:name=".filemanager.OrionFileManagerActivity"
-                  android:theme="@style/Theme.Orion.Dark.NoActionBar"
-                  android:launchMode="singleTask"
-                  android:icon="@mipmap/ic_launcher"
-                  android:configChanges="orientation|locale|screenSize"
-            android:exported="true">
+        <activity
+            android:name=".filemanager.OrionFileManagerActivity"
+            android:configChanges="orientation|locale|screenSize"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Orion.Dark.NoActionBar">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
-
-        <activity android:name=".OrionSaveFileActivity"
-                  android:label="@string/file_manager_title"
-                  android:theme="@style/Theme.Orion.Dark.NoActionBar"
-                  android:icon="@drawable/orion"/>
-
-        <activity android:name=".OrionFileSelectorActivity"
-                  android:label="@string/file_manager_title"
-                  android:theme="@style/Theme.Orion.Dark.NoActionBar"
-                  android:icon="@drawable/orion"/>
-
-
-        <activity android:name=".prefs.OrionPreferenceActivityX"
-            android:theme="@style/Theme.AppCompat"
-            android:label="@string/application_settings_title"/>
-
-        <activity android:name=".prefs.OrionBookPreferencesActivityX"
-                  android:theme="@style/Theme.AppCompat"
-                  android:label="@string/book_pref_title"/>
-
-        <activity android:name=".prefs.OrionTapActivity" android:screenOrientation="behind"
-                  android:theme="@style/Theme.AppCompat"
-                  android:label="Tap Zones"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="universe.constellation.orion.viewer.TAP_ZONES"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".prefs.ActionListActivity" android:screenOrientation="behind"
-                  android:theme="@style/Theme.AppCompat"
-                  android:label="Action List"/>
 
 
     </application>

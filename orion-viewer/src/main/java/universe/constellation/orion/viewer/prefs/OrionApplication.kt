@@ -56,11 +56,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         GlobalOptions(this, androidx.preference.PreferenceManager.getDefaultSharedPreferences(this))
     }
 
-    val keyBindingPrefs: KeyBindingPreferences by lazy {
-        KeyBindingPreferences(getSharedPreferences("key_binding", Context.MODE_PRIVATE))
-    }
-
-
     var tempOptions: TemporaryOptions? = null
         private set
 
@@ -147,32 +142,11 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
     }
 
 
-
-    //temporary hack
-    fun processBookOptionChange(key: String, value: Any) {
-        viewActivity?.controller?.run {
-            when (key) {
-                "walkOrder" -> changetWalkOrder(value as String)
-                "pageLayout" -> changetPageLayout(value as Int)
-                "contrast" -> changeContrast(value as Int)
-                "threshold" -> changeThreshhold(value as Int)
-                "screenOrientation" -> changeOrinatation(value as String)
-                "colorMode" -> changeColorMode(value as String, true)
-                "zoom" -> changeZoom(value as Int)
-            }
-        }
-    }
-
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         if (DEBUG) {
             MultiDex.install(this)
         }
-    }
-
-    fun debugLogFolder(): File? {
-        val download = getExternalFilesDir(null) ?: return null
-        return File(download, "debug/logs")
     }
 
 

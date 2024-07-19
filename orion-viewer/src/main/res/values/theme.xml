@@ -4,10 +4,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="whitegrey">#FFF2F2F2</color>
-    <color name="orion_orange">#ffcc66</color>
+    <color name="orion_orange">#87CEEB</color>
     <color name="orion_orange2">#ffaa55</color>
     <color name="toolbar_icon_tint_ligth">#89b5ac</color>
-    <color name="toolbar_icon_tint">#2B4678</color>
+    <color name="toolbar_icon_tint">#da8d54</color>
     <color name="orion_blue">#54759e</color>
     <dimen name="root_padding">5dp</dimen>
     <dimen name="min_entry_height">48dp</dimen>

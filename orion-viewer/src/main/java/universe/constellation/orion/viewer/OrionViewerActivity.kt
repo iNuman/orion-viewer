@@ -18,8 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
 import universe.constellation.orion.viewer.FallbackDialogs.Companion.saveFileByUri
-import universe.constellation.orion.viewer.Permissions.ASK_READ_PERMISSION_FOR_BOOK_OPEN
-import universe.constellation.orion.viewer.Permissions.hasReadStoragePermission
 import universe.constellation.orion.viewer.android.getFileInfo
 import universe.constellation.orion.viewer.android.isRestrictedAccessPath
 import universe.constellation.orion.viewer.device.Device
@@ -120,17 +118,17 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (ASK_READ_PERMISSION_FOR_BOOK_OPEN == requestCode) {
-            println("Permission callback $requestCode...")
-            processIntentAndCheckPermission(intent ?: return)
-        }
-    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<String>,
+//        grantResults: IntArray,
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+////        if (ASK_READ_PERMISSION_FOR_BOOK_OPEN == requestCode) {
+//            println("Permission callback $requestCode...")
+//            processIntentAndCheckPermission(intent ?: return)
+////        }
+//    }
 
     internal fun onNewIntentInternal(intent: Intent) {
         onNewIntent(intent)
@@ -144,15 +142,15 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
     private fun askReadPermissionOrOpenExisting(fileInfo: FileInfo, intent: Intent) {
         log("Checking permissions for: $fileInfo")
         myState = MyState.WAITING_ACTION
-        if (fileInfo.isRestrictedAccessPath() || hasReadStoragePermission(this)) {
-            FallbackDialogs().createPrivateResourceFallbackDialog(this, fileInfo, intent).show()
-        } else {
-            FallbackDialogs().createGrantReadPermissionsDialog(
-                this@OrionViewerActivity,
-                fileInfo,
-                intent
-            ).show()
-        }
+//        if (fileInfo.isRestrictedAccessPath() || hasReadStoragePermission(this)) {
+//            FallbackDialogs().createPrivateResourceFallbackDialog(this, fileInfo, intent).show()
+//        } else {
+//            FallbackDialogs().createGrantReadPermissionsDialog(
+//                this@OrionViewerActivity,
+//                fileInfo,
+//                intent
+//            ).show()
+//        }
     }
 
     internal fun processIntentAndCheckPermission(intent: Intent, isUserIntent: Boolean = false) {
@@ -446,8 +444,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
                 processIntentAndCheckPermission(intent ?: return)
             }
 
-            PERMISSION_READ_RESULT ->
-                processIntentAndCheckPermission(intent ?: return)
         }
     }
 
@@ -499,11 +495,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
 
     private fun doOnLayout(lastPageInfo1: LastPageInfo) {
         (view as View).doOnLayout {
-//            if (globalOptions.isShowTapHelp) {
-//                TapHelpDialog().show(supportFragmentManager, "TAP_HELP")
-//
-//                globalOptions.saveBooleanProperty(GlobalOptions.SHOW_TAP_HELP, false)
-//            }
             controller?.drawPage(
                 lastPageInfo1.pageNumber,
                 lastPageInfo1.newOffsetX,
@@ -530,9 +521,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         const val OPEN_BOOKMARK_ACTIVITY_RESULT = 1
 
         const val SAVE_FILE_RESULT = 2
-
-        const val PERMISSION_READ_RESULT = Permissions.ASK_READ_PERMISSION_FOR_BOOK_OPEN
-
 
         const val CROP_RESTRICTION_MIN = -10
 

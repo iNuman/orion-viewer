@@ -21,11 +21,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import universe.constellation.orion.viewer.OrionBaseActivity
 import universe.constellation.orion.viewer.OrionViewerActivity
-import universe.constellation.orion.viewer.Permissions
-import universe.constellation.orion.viewer.Permissions.checkAndRequestStorageAccessPermissionOrReadOne
-import universe.constellation.orion.viewer.Permissions.hasReadStoragePermission
 import universe.constellation.orion.viewer.R
-import universe.constellation.orion.viewer.android.isAtLeastKitkat
 import universe.constellation.orion.viewer.getVectorDrawable
 import universe.constellation.orion.viewer.log
 import java.io.File
@@ -48,50 +44,12 @@ abstract class OrionFileManagerActivityBase @JvmOverloads constructor() : OrionB
         onOrionCreate(savedInstanceState, R.layout.file_manager, true)
         log("Creating file manager")
 
-        prefs =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        showPermissionRequestDialog()
-
+        prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(applicationContext)
         onNewIntent(intent)
     }
 
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (Permissions.ASK_READ_PERMISSION_FOR_FILE_MANAGER == requestCode) {
-            log("Permission callback: " + permissions.joinToString() + " " + grantResults.joinToString())
-        }
-    }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        log("FileManager: On activity result requestCode=$requestCode resultCode=$resultCode")
-        when (requestCode) {
-            Permissions.ASK_READ_PERMISSION_FOR_FILE_MANAGER -> {
-            }
-        }
-    }
-
-
-    private fun showPermissionRequestDialog() {
-        if (!hasReadStoragePermission(this)) {
-            AlertDialog.Builder(this).setMessage(R.string.permission_directory_warning)
-                .setPositiveButton(R.string.permission_grant) { _, _ ->
-                    requestPermissions()
-                }.setNegativeButton(R.string.permission_cancel) { d, _ ->
-                    d.dismiss()
-                }.show()
-        }
-    }
-
-    internal fun requestPermissions() {
-        checkAndRequestStorageAccessPermissionOrReadOne(Permissions.ASK_READ_PERMISSION_FOR_FILE_MANAGER)
-    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {

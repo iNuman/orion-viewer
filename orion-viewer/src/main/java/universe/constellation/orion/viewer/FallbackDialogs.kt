@@ -1,6 +1,5 @@
 package universe.constellation.orion.viewer
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.ProgressDialog
@@ -13,19 +12,11 @@ import android.os.Build
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import universe.constellation.orion.viewer.FallbackDialogs.Companion.saveFileByUri
-import universe.constellation.orion.viewer.Permissions.checkAndRequestStorageAccessPermissionOrReadOne
-import universe.constellation.orion.viewer.Permissions.hasReadStoragePermission
-import universe.constellation.orion.viewer.android.isAtLeastKitkat
-import universe.constellation.orion.viewer.android.isContentScheme
-import universe.constellation.orion.viewer.android.isContentUri
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivity
 import java.io.File
 import java.util.Locale
@@ -39,58 +30,20 @@ class ResourceIdAndString(val id: Int, val value: String) {
 open class FallbackDialogs {
 
     fun createBadIntentFallbackDialog(activity: OrionViewerActivity, fileInfo: FileInfo?, intent: Intent): Dialog {
-        val isContentScheme = intent.isContentScheme()
+//        val isContentScheme = intent.isContentScheme()
         return createFallbackDialog(
             activity,
             fileInfo,
             intent,
             R.string.fileopen_error_during_intent_processing,
             R.string.fileopen_error_during_intent_processing_info,
-            if (isContentScheme) R.string.fileopen_open_in_temporary_file else null,
+            null,
+//            if (isContentScheme) R.string.fileopen_open_in_temporary_file else null,
             listOfNotNull(
-                R.string.fileopen_permissions_grant_read.takeIf { !hasReadStoragePermission(activity) },
-                R.string.fileopen_open_in_temporary_file.takeIf { isContentScheme },
-                R.string.fileopen_save_to_file.takeIf {isContentScheme && hasReadStoragePermission(activity)},
+//                R.string.fileopen_open_in_temporary_file.takeIf { isContentScheme },
                 R.string.fileopen_open_recent_files,
                 R.string.fileopen_report_error_by_github_and_return,
                 R.string.fileopen_report_error_by_email_and_return
-            )
-        )
-    }
-
-    fun createPrivateResourceFallbackDialog(activity: OrionViewerActivity, fileInfo: FileInfo, intent: Intent): Dialog {
-        val isContentScheme = intent.isContentScheme()
-        return createFallbackDialog(
-            activity,
-            fileInfo,
-            intent,
-            R.string.fileopen_private_resource_access,
-            R.string.fileopen_private_resource_access_info,
-            if (isContentScheme) R.string.fileopen_open_in_temporary_file else null,
-            listOfNotNull(
-                R.string.fileopen_permissions_grant_read.takeIf { !isContentScheme && !hasReadStoragePermission(activity)},
-                R.string.fileopen_open_in_temporary_file.takeIf { isContentScheme },
-                R.string.fileopen_save_to_file.takeIf {isContentScheme && hasReadStoragePermission(activity)},
-                R.string.fileopen_open_recent_files.takeIf { isContentScheme },
-                R.string.fileopen_report_error_by_github_and_return.takeIf { !isContentScheme },
-                R.string.fileopen_report_error_by_email_and_return.takeIf { !isContentScheme }
-            )
-        )
-    }
-
-    fun createGrantReadPermissionsDialog(activity: OrionViewerActivity, fileInfo: FileInfo, intent: Intent): Dialog {
-        val isContentScheme = intent.isContentScheme()
-        return createFallbackDialog(
-            activity,
-            fileInfo,
-            intent,
-            R.string.fileopen_permission_dialog,
-            R.string.fileopen_permission_dialog_info,
-            R.string.fileopen_permissions_grant_read,
-            listOfNotNull(
-                R.string.fileopen_permissions_grant_read,
-                R.string.fileopen_open_in_temporary_file.takeIf { isContentScheme },
-                R.string.fileopen_open_recent_files
             )
         )
     }
@@ -143,15 +96,11 @@ open class FallbackDialogs {
         intent: Intent
     ) {
         when (id) {
-            R.string.fileopen_permissions_grant_read -> {
-                activity.checkAndRequestStorageAccessPermissionOrReadOne(Permissions.ASK_READ_PERMISSION_FOR_BOOK_OPEN)
-                alertDialog.dismiss()
-            }
 
             R.string.fileopen_save_to_file -> {
-                if (isAtLeastKitkat()) {
-                    sendCreateFileRequest(activity, fileInfo, intent)
-                } else {
+//                if (isAtLeastKitkat()) {
+//                    sendCreateFileRequest(activity, fileInfo, intent)
+//                } else {
                     activity.startActivity(
                         Intent(activity, OrionSaveFileActivity::class.java).apply {
                             putExtra(URI, uri)
@@ -160,7 +109,7 @@ open class FallbackDialogs {
                             }
                         }
                     )
-                }
+//                }
                 alertDialog.dismiss()
             }
 
@@ -266,25 +215,8 @@ internal fun Context.createTmpFile(fileInfo: FileInfo?, extension: String): File
 }
 
 
-
-@RequiresApi(Build.VERSION_CODES.KITKAT)
-private fun sendCreateFileRequest(activity: Activity, fileInfo: FileInfo?, readIntent: Intent) {
-    val createFileIntent = Intent(Intent.ACTION_CREATE_DOCUMENT)
-    createFileIntent.addCategory(Intent.CATEGORY_OPENABLE)
-    val mimeType = readIntent.type ?: readIntent.data?.let {
-        activity.contentResolver.getType(it)
-    }
-    if (mimeType != null) {
-        createFileIntent.type = mimeType
-    }
-    fileInfo?.name?.let {
-        createFileIntent.putExtra(Intent.EXTRA_TITLE, it)
-    }
-    activity.startActivityForResult(createFileIntent, OrionViewerActivity.SAVE_FILE_RESULT)
-}
-
 fun FileInfo.canHasTmpFileWithStablePath(): Boolean {
-    return !id.isNullOrBlank() && size != 0L && !name.isNullOrBlank() && uri.isContentUri
+    return !id.isNullOrBlank() && size != 0L && !name.isNullOrBlank()
 }
 
 fun Context.getStableTmpFileIfExists(fileInfo: FileInfo): File? {
@@ -292,4 +224,3 @@ fun Context.getStableTmpFileIfExists(fileInfo: FileInfo): File? {
     val file = File(tmpContentFolderForFile(fileInfo), fileInfo.name ?: return null)
     return file.takeIf { it.exists() }
 }
-
