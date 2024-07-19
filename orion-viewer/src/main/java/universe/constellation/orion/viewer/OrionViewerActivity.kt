@@ -245,9 +245,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
             }
 
             try {
-                if (!askPassword(newDocument)) {
-                    return@launch
-                }
 
                 if (newDocument.pageCount == 0) {
                     newDocument.destroy()
@@ -451,47 +448,6 @@ class OrionViewerActivity : OrionBaseActivity(viewerType = Device.VIEWER_ACTIVIT
         selectionAutomata.startSelection(isSingleSelection, translate)
     }
 
-
-    private suspend fun askPassword(controller: Document): Boolean {
-        if (controller.needPassword()) {
-            val view = layoutInflater.inflate(R.layout.password, null)
-            val builder = createThemedAlertBuilder()
-
-            builder.setView(view)
-                .setNegativeButton(R.string.string_cancel) { dialog, _ -> dialog.cancel() }
-                .setPositiveButton(R.string.string_apply) { _, _ -> }
-
-
-            val dialog = builder.create()
-            dialog.setCanceledOnTouchOutside(false)
-            dialog.show()
-
-            return suspendCancellableCoroutine { continuation ->
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                    lifecycleScope.launch {
-                        val input = view.findViewById<TextInputEditText>(R.id.password)!!
-                        if (controller.authenticate(input.text.toString())) {
-                            dialog.dismiss()
-                            continuation.resume(true)
-                        } else {
-                            input.error = getString(R.string.string_wrong_password)
-                        }
-                    }
-                }
-
-                dialog.setOnCancelListener {
-                    continuation.resume(false)
-                }
-
-                continuation.invokeOnCancellation {
-                    controller.destroy()
-                    dialog.cancel()
-                }
-            }
-        } else {
-            return true
-        }
-    }
 
     private fun doOnLayout(lastPageInfo1: LastPageInfo) {
         (view as View).doOnLayout {
