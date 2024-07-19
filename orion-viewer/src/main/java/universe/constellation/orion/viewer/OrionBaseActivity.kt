@@ -63,17 +63,12 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
 
     @JvmOverloads
     protected fun onOrionCreate(savedInstanceState: Bundle?, layoutId: Int, addToolbar: Boolean = false, displayHomeAsUpEnabled: Boolean = false) {
-        orionApplication.applyTheme(this)
-        orionApplication.updateLanguage(resources)
-
         if (this is OrionViewerActivity || this is OrionFileManagerActivityBase) {
             val screenOrientation = getScreenOrientation(applicationDefaultOrientation)
             changeOrientation(screenOrientation)
         }
 
         super.onCreate(savedInstanceState)
-
-//        device?.onCreate(this)
 
         if (layoutId != -1) {
             setContentView(layoutId)

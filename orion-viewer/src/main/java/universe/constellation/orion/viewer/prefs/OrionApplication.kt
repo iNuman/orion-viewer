@@ -64,22 +64,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
 
     var currentBookParameters: LastPageInfo? = null
 
-    private var currentLanguage: String = DEFAULT_LANGUAGE
-
-    private val appTheme: String
-        get() {
-            val theme = options.applicationTheme
-            return theme
-        }
-
-    private val themeId: Int
-        get() = when(appTheme) {
-            "DARK" -> R.style.Theme_Orion_Dark_NoActionBar
-            "LIGHT" -> R.style.Theme_Orion_Light_NoActionBar
-            "ANDROID_LIGHT" ->  R.style.Theme_Orion_Android_Light_NoActionBar
-            "ANDROID_DARK" ->  R.style.Theme_Orion_Android_Dark_NoActionBar
-            else -> R.style.Theme_Orion_Dark_NoActionBar
-        }
 
     val sdkVersion: Int
         get() = Build.VERSION.SDK_INT
@@ -87,54 +71,11 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
     override fun onCreate() {
         instance = this
         super<Application>.onCreate()
-        setLanguage(options.appLanguage)
-        logOrionAndDeviceInfo()
-        initDjvuResources(this)
-    }
-
-    fun setLanguage(langCode: String) {
-        currentLanguage = langCode
-    }
-
-    fun updateLanguage(res: Resources) {
-        try {
-            val currentLocales = ConfigurationCompat.getLocales(res.configuration)
-            val newLocale =
-                if (DEFAULT_LANGUAGE == currentLanguage) Locale.getDefault() else Locale(
-                    currentLanguage
-                )
-            if (!currentLocales.isEmpty) {
-                if (newLocale.language == currentLocales[0]?.language) return
-            }
-            log("Updating locale to $currentLanguage from ${currentLocales[0]?.language}")
-
-            if (Build.VERSION.SDK_INT >= 17) {
-                val prevLocales = Array(currentLocales.size()) { currentLocales.get(it) }
-                ConfigurationCompat.setLocales(
-                    res.configuration,
-                    LocaleListCompat.create(newLocale, *prevLocales)
-                )
-            } else {
-                res.configuration.locale = newLocale
-            }
-            res.updateConfiguration(res.configuration, res.displayMetrics)
-        } catch (e: Exception) {
-            log("Error setting locale: $currentLanguage", e)
-        }
-
     }
 
     fun onNewBook(fileName: String) {
         tempOptions = TemporaryOptions().also { it.openedFile = fileName }
     }
-
-
-    fun applyTheme(activity: Activity) {
-        if (this.themeId != -1) {
-            activity.setTheme(this.themeId)
-        }
-    }
-
 
     fun destroyMainActivity() {
         viewActivity = null
@@ -155,58 +96,5 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         var instance: OrionApplication by Delegates.notNull()
             private set
 
-        fun logOrionAndDeviceInfo() {
-            log("Orion Viewer $VERSION_NAME")
-            log("Device: $DEVICE")
-            log("Model: $MODEL")
-            log("Manufacturer:  $MANUFACTURER")
-            log("Android version :  $CODENAME $RELEASE")
-        }
-
-
-
-        @JvmField
-        val MANUFACTURER = getField("MANUFACTURER")
-
-        @JvmField
-        val MODEL = getField("MODEL")
-
-        @JvmField
-        val DEVICE = getField("DEVICE")
-
-        @JvmField
-        val HARDWARE = getField("HARDWARE")
-
-
-        @JvmField
-        val RK30SDK = "rk30sdk".equals(MODEL, ignoreCase = true) && ("T62D".equals(
-            DEVICE,
-            ignoreCase = true
-        ) || DEVICE.lowercase(Locale.getDefault()).contains("onyx"))
-
-        private fun getField(name: String): String =
-            try {
-                Build::class.java.getField(name).get(null) as String
-            } catch (e: Exception) {
-                log("Exception on extracting Build property: $name")
-                "!ERROR!"
-            }
-
-
-        @JvmField
-        val version: String = Build.VERSION.INCREMENTAL
-
-        fun initDjvuResources(orionApplication: Context): Job? {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val fileToCopy = File(orionApplication.filesDir, "djvuConf")
-                val envPath = File(fileToCopy, "osi").absolutePath
-                return CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
-                    copyResIfNotExists(orionApplication.assets, "osi", fileToCopy)
-                }.also {
-                    Os.setenv("DJVU_CONFIG_DIR", envPath, true)
-                }
-            }
-            return null
-        }
     }
 }

@@ -75,8 +75,6 @@ class GlobalOptions(
 //                            horizontalOverlapping,
 //                            verticalOverlapping
 //                        )
-                    } else if (APP_LANGUAGE == name) {
-                        context.setLanguage(appLanguage)
                     } else if (DRAW_OFF_PAGE == name) {
                         activity.fullScene.setDrawOffPage(isDrawOffPage)
                         //TODO ?
