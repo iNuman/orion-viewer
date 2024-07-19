@@ -22,7 +22,6 @@ package universe.constellation.orion.viewer
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
@@ -30,24 +29,19 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.KeyEvent
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import com.google.android.material.color.MaterialColors
-import universe.constellation.orion.viewer.device.AndroidDevice
 import universe.constellation.orion.viewer.device.Device
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase
-import universe.constellation.orion.viewer.prefs.GlobalOptions
 import universe.constellation.orion.viewer.prefs.OrionApplication
 
 abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) : AppCompatActivity() {
 
-    val device: AndroidDevice? = if (viewerType == Device.VIEWER_ACTIVITY) OrionApplication.createDevice() else null
+//    val device: AndroidDevice? = if (viewerType == Device.VIEWER_ACTIVITY) OrionApplication.createDevice() else null
 
     lateinit var toolbar: Toolbar
         private set
@@ -56,10 +50,8 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
         get() = applicationContext as OrionApplication
 
     val applicationDefaultOrientation: String
-        get() = orionApplication.options.getStringProperty(GlobalOptions.SCREEN_ORIENTATION, "DEFAULT")
+        get() = "DEFAULT"//orionApplication.options.getStringProperty(GlobalOptions.SCREEN_ORIENTATION, "DEFAULT")
 
-    val analytics
-        get() = orionApplication.analytics
 
     val globalOptions
         get() = orionApplication.options
@@ -81,7 +73,7 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
 
         super.onCreate(savedInstanceState)
 
-        device?.onCreate(this)
+//        device?.onCreate(this)
 
         if (layoutId != -1) {
             setContentView(layoutId)
@@ -103,26 +95,26 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-        device?.onDestroy()
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        if (hasFocus) {
-            device?.onWindowGainFocus()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        device?.onPause()
-    }
-
-    override fun onUserInteraction() {
-        super.onUserInteraction()
-        device?.onUserInteraction()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        device?.onDestroy()
+//    }
+//
+//    override fun onWindowFocusChanged(hasFocus: Boolean) {
+//        if (hasFocus) {
+//            device?.onWindowGainFocus()
+//        }
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        device?.onPause()
+//    }
+//
+//    override fun onUserInteraction() {
+//        super.onUserInteraction()
+//        device?.onUserInteraction()
+//    }
 
     fun showWarning(warning: String) {
         Toast.makeText(this, warning, Toast.LENGTH_SHORT).show()

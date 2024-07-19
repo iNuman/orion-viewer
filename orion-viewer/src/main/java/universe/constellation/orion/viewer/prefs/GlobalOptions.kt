@@ -23,7 +23,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import universe.constellation.orion.viewer.PageOptions
 import universe.constellation.orion.viewer.PageWalker
 import universe.constellation.orion.viewer.R
-import universe.constellation.orion.viewer.device.EInkDevice
 import universe.constellation.orion.viewer.errorInDebug
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivity
 import universe.constellation.orion.viewer.log
@@ -85,9 +84,6 @@ class GlobalOptions(
                     }
                 }
 
-                if (DEBUG == name) {
-                    context.startOrStopDebugLogger(getBooleanProperty(DEBUG, false))
-                }
             }
 
         prefs.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
@@ -153,7 +149,7 @@ class GlobalOptions(
         get() = getBooleanProperty(APPLY_AND_CLOSE, false)
 
     val isDrawOffPage: Boolean
-        get() = getBooleanProperty(DRAW_OFF_PAGE, instance.device !is EInkDevice)
+        get() = true //getBooleanProperty(DRAW_OFF_PAGE, instance.device !is EInkDevice)
 
     val isActionBarVisible: Boolean
         get() = getBooleanProperty(SHOW_ACTION_BAR.key, SHOW_ACTION_BAR.defaultValue)

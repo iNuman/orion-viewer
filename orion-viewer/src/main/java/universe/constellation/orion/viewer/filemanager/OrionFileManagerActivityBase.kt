@@ -85,7 +85,6 @@ abstract class OrionFileManagerActivityBase @JvmOverloads constructor() : OrionB
                     requestPermissions()
                 }.setNegativeButton(R.string.permission_cancel) { d, _ ->
                     d.dismiss()
-                    analytics.permissionEvent(this.javaClass.name, false, globalOptions.isNewUI)
                 }.show()
         }
     }

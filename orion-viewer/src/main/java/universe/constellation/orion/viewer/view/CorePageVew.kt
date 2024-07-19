@@ -1,6 +1,5 @@
 package universe.constellation.orion.viewer.view
 
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import universe.constellation.orion.viewer.Controller
 import universe.constellation.orion.viewer.PageSize
 import universe.constellation.orion.viewer.document.Document
 import universe.constellation.orion.viewer.document.Page
-import universe.constellation.orion.viewer.errorInDebug
 
 open class CorePageView(
     val pageNum: Int,
@@ -25,12 +23,7 @@ open class CorePageView(
     rootJob: Job,
     val page: Page = document.getOrCreatePageAdapter(pageNum)
 ) {
-    private val analytics = controller.activity.analytics
 
-    private val handler = CoroutineExceptionHandler { _, ex ->
-        errorInDebug("Processing error for page $pageNum", ex)
-        analytics.error(ex)
-    }
 
     private val renderingPageJobs = SupervisorJob(rootJob)
 
@@ -44,12 +37,12 @@ open class CorePageView(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     protected val renderingScope = CoroutineScope(
-        controller.renderingDispatcher.limitedParallelism(2) + renderingPageJobs + handler
+        controller.renderingDispatcher.limitedParallelism(2) + renderingPageJobs
     )
 
     protected val renderingScopeOnUI = renderingScope + Dispatchers.Main
 
-    protected val dataPageScope = CoroutineScope(controller.context + dataPageJobs + handler)
+    protected val dataPageScope = CoroutineScope(controller.context + dataPageJobs)
 
 
     fun readPageDataFromUI(): Deferred<Unit> {

@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.graphics.RectF
 import androidx.core.math.MathUtils
 import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import universe.constellation.orion.viewer.BuildConfig
 import universe.constellation.orion.viewer.Controller
@@ -27,12 +26,6 @@ class PageLayoutManager(val controller: Controller, val scene: OrionDrawScene) {
 
     class Callback(val page: Int, val job: CompletableJob, val body: (PageInfo) -> Unit)
 
-    private val analytics = controller.activity.analytics
-
-    private val handler = CoroutineExceptionHandler { _, ex ->
-        errorInDebug("Processing error in PageLayoutManager", ex)
-        analytics.error(ex)
-    }
 
     val bitmapManager: BitmapManager = BitmapManager(this)
 

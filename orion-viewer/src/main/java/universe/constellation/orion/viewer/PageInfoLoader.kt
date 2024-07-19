@@ -90,7 +90,6 @@ fun LastPageInfo.save(activity: OrionBaseActivity) {
         serializer.endTag(nameSpace, "bookParameters")
         serializer.endDocument()
     } catch (e: IOException) {
-        activity.analytics.error(e)
         showAndLogError(activity, "Couldn't save book preferences", e)
     } finally {
         if (writer != null) {

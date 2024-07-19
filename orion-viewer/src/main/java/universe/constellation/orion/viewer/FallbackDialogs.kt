@@ -23,7 +23,6 @@ import kotlinx.coroutines.withContext
 import universe.constellation.orion.viewer.FallbackDialogs.Companion.saveFileByUri
 import universe.constellation.orion.viewer.Permissions.checkAndRequestStorageAccessPermissionOrReadOne
 import universe.constellation.orion.viewer.Permissions.hasReadStoragePermission
-import universe.constellation.orion.viewer.analytics.FALLBACK_DIALOG
 import universe.constellation.orion.viewer.android.isAtLeastKitkat
 import universe.constellation.orion.viewer.android.isContentScheme
 import universe.constellation.orion.viewer.android.isContentUri
@@ -101,10 +100,7 @@ open class FallbackDialogs {
          val dialogTitle = activity.getString(title)
 //         activity.showErrorOrFallbackPanel(dialogTitle, intent, cause = dialogTitle)
 
-         activity.analytics.dialog(FALLBACK_DIALOG, true)
-
          val uri = intent.data!!
-
          val view = activity.layoutInflater.inflate(R.layout.intent_problem_dialog, null)
          val infoText = view.findViewById<TextView>(R.id.intent_problem_info)
          infoText.setText(info)
@@ -124,12 +120,10 @@ open class FallbackDialogs {
 
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
              builder.setOnDismissListener { _ ->
-                 activity.analytics.dialog(FALLBACK_DIALOG, false)
              }
          }
 
          val alertDialog = builder.create()
-
          val fallbacks = view.findViewById<ListView>(R.id.intent_fallback_list)
          fallbacks.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, list.map { ResourceIdAndString(it, activity.getString(it)) })
 
@@ -185,14 +179,14 @@ open class FallbackDialogs {
             R.string.fileopen_report_error_by_github_and_return -> {
                 val title =
                     activity.applicationContext.getString(R.string.crash_on_intent_opening_title)
-                activity.reportErrorVia(false, title, intent.toString())
+//                activity.reportErrorVia(false, title, intent.toString())
 
             }
 
             R.string.fileopen_report_error_by_email_and_return -> {
                 val title =
                     activity.applicationContext.getString(R.string.crash_on_intent_opening_title)
-                activity.reportErrorVia(true, title, intent.toString())
+//                activity.reportErrorVia(true, title, intent.toString())
             }
 
             else -> error("Unknown option id: $id")
@@ -209,13 +203,7 @@ open class FallbackDialogs {
             targetFileUri: Uri,
             handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
                 exception.printStackTrace()
-                this@saveFileByUri.showErrorReportDialog(
-                    R.string.error_on_file_saving_title,
-                    R.string.error_on_file_saving_title,
-                    intent,
-                    "targetFile=$targetFileUri",
-                    exception
-                )
+
             },
             callbackAction: () -> Unit
         ) {

@@ -76,7 +76,7 @@ class OrionTapActivity : OrionBaseActivity() {
     }
 
     private fun selectAction(view: View, isLong: Boolean, index: Int): Boolean {
-        val intent = Intent(this@OrionTapActivity, ActionListActivity::class.java)
+//        val intent = Intent(this@OrionTapActivity, ActionListActivity::class.java)
         intent.putExtra("code", myCode[index][if (isLong) 1 else 0])
         intent.putExtra("type", if (isLong) 1 else 0)
         activeView = view
@@ -94,7 +94,7 @@ class OrionTapActivity : OrionBaseActivity() {
                 val view = activeView!!.findViewById<View>(if (isLong) R.id.longClick else R.id.shortClick) as TextView
                 val code = data!!.getIntExtra("code", 0)
                 val action = Action.getAction(code)
-                myCode[index][if (isLong) 1 else 0] = action.code
+//                myCode[index][if (isLong) 1 else 0] = action.code
                 view.text = resources.getString(action.nameRes)
 
                 val i = index / 3
@@ -102,7 +102,7 @@ class OrionTapActivity : OrionBaseActivity() {
                 log("$index $i $j")
                 val pref = PreferenceManager.getDefaultSharedPreferences(this)
                 val ed = pref.edit()
-                ed.putInt(getKey(i, j, isLong), action.code)
+//                ed.putInt(getKey(i, j, isLong), action.code)
                 ed.apply()
             }
         }
@@ -113,15 +113,16 @@ class OrionTapActivity : OrionBaseActivity() {
 
         @JvmStatic
         fun getDefaultAction(row: Int, column: Int, isLong: Boolean): Int {
-            return if (row == 1 && column == 1) {
-                if (isLong) Action.OPTIONS.code else Action.MENU.code
-            } else {
-                if (2 - row < column) {
-                    if (isLong) Action.NEXT.code else Action.NEXT.code
-                } else {
-                    if (isLong) Action.PREV.code else Action.PREV.code
-                }
-            }
+            return  -1
+//            return if (row == 1 && column == 1) {
+//                if (isLong) Action.OPTIONS.code else Action.MENU.code
+//            } else {
+//                if (2 - row < column) {
+//                    if (isLong) Action.NEXT.code else Action.NEXT.code
+//                } else {
+//                    if (isLong) Action.PREV.code else Action.PREV.code
+//                }
+//            }
         }
 
         @JvmStatic

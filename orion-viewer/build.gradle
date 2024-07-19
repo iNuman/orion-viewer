@@ -1,10 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: '../project.gradle'
-if (enableAnalytics) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'com.google.firebase.crashlytics'
-}
 
 project.ext {
     Properties properties = new Properties()
@@ -34,11 +30,6 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 //    implementation project(":nativeLibs:djvuModule")
     implementation project(":nativeLibs:mupdfModule")
-    if (enableAnalytics) {
-        implementation 'com.google.firebase:firebase-analytics:19.0.2'
-        implementation 'com.google.firebase:firebase-crashlytics:18.2.3'
-        implementation 'com.google.firebase:firebase-analytics-ktx:19.0.2'
-    }
     implementation "androidx.multidex:multidex:2.0.1"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
@@ -89,9 +80,6 @@ android {
         } else {
             archivesBaseName = "orion-viewer-$versionName" + (isAndroid40Build ? "-android40" : "")
         }
-
-        def analyticsPackage = "" + applicationId + ".analytics"
-        buildConfigField "${analyticsPackage}.Analytics", "ANALYTICS", enableAnalytics ? "new ${analyticsPackage}.FireBaseAnalytics()" : "new ${analyticsPackage}.Analytics()"
     }
 
     sourceSets {
@@ -101,9 +89,6 @@ android {
 
                 if (onyxSdkPath != null) {
                     srcDirs += onyxSdkPath + "/src/main/java/"
-                }
-                if (enableAnalytics) {
-                    srcDirs += "src/analytics/kotlin"
                 }
             }
             assets.srcDirs += '../nativeLibs/djvu/share/djvu'

@@ -12,10 +12,6 @@ import universe.constellation.orion.viewer.dialog.toDialogMargins
 import universe.constellation.orion.viewer.dialog.toMargins
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivity
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase.Companion.DONT_OPEN_RECENT_FILE
-import universe.constellation.orion.viewer.prefs.GlobalOptions
-import universe.constellation.orion.viewer.prefs.OrionApplication.Companion.instance
-import universe.constellation.orion.viewer.prefs.OrionBookPreferencesActivityX
-import universe.constellation.orion.viewer.prefs.OrionPreferenceActivityX
 import universe.constellation.orion.viewer.dialog.HighlightTextDialog
 import universe.constellation.orion.viewer.util.ColorUtil.getColorMode
 
@@ -214,10 +210,10 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             parameter: Any?
         ) {
             val options = activity.globalOptions
-            options.saveBooleanProperty(
-                GlobalOptions.FULL_SCREEN,
-                java.lang.Boolean.FALSE == options.FULL_SCREEN.value
-            )
+//            options.saveBooleanProperty(
+//                GlobalOptions.FULL_SCREEN,
+//                java.lang.Boolean.FALSE == options.FULL_SCREEN.value
+//            )
         }
     },
 
@@ -247,8 +243,8 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
 
     BOOK_OPTIONS(R.string.action_book_options, R.integer.action_book_options) {
         override fun doAction(activity: OrionBaseActivity) {
-            val intent = Intent(activity, OrionBookPreferencesActivityX::class.java)
-            activity.startActivity(intent)
+//            val intent = Intent(activity, OrionBookPreferencesActivityX::class.java)
+//            activity.startActivity(intent)
         }
     },
 
@@ -365,8 +361,8 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
 
     OPTIONS(R.string.action_options_page, R.integer.action_options_page) {
         override fun doAction(activity: OrionBaseActivity) {
-            val intent = Intent(activity, OrionPreferenceActivityX::class.java)
-            activity.startActivity(intent)
+//            val intent = Intent(activity, OrionPreferenceActivityX::class.java)
+//            activity.startActivity(intent)
         }
     },
 
@@ -548,8 +544,8 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
         }
     };
 
-    @JvmField
-    val code: Int = instance.resources.getInteger(idRes)
+//    @JvmField
+//    val code: Int = instance.resources.getInteger(idRes)
 
     open fun doAction(controller: Controller?, activity: OrionViewerActivity, parameter: Any?) {
         doAction(activity)
@@ -602,7 +598,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
         init {
             val values = entries.toTypedArray()
             for (value in values) {
-                actions[value.code] = value
+//                actions[value.code] = value
             }
         }
 

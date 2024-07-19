@@ -44,7 +44,6 @@ class OrionSaveFileActivity : OrionFileManagerActivityBase() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         findViewById<View>(R.id.saveFileIdView).visibility = View.VISIBLE
     }
 

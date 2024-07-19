@@ -30,34 +30,21 @@ import android.system.Os
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.multidex.MultiDex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import universe.constellation.orion.viewer.AndroidLogger
-import universe.constellation.orion.viewer.AndroidLogger.startLogger
-import universe.constellation.orion.viewer.AndroidLogger.stopLogger
-import universe.constellation.orion.viewer.BuildConfig
 import universe.constellation.orion.viewer.BuildConfig.DEBUG
 import universe.constellation.orion.viewer.BuildConfig.VERSION_NAME
 import universe.constellation.orion.viewer.LastPageInfo
 import universe.constellation.orion.viewer.OrionViewerActivity
 import universe.constellation.orion.viewer.R
-import universe.constellation.orion.viewer.analytics.Analytics
-import universe.constellation.orion.viewer.device.AndroidDevice
-import universe.constellation.orion.viewer.device.MagicBookBoeyeDevice
-import universe.constellation.orion.viewer.device.OnyxDevice
-import universe.constellation.orion.viewer.device.OnyxUtil
 import universe.constellation.orion.viewer.log
-import universe.constellation.orion.viewer.logger
 import universe.constellation.orion.viewer.prefs.GlobalOptions.Companion.DEFAULT_LANGUAGE
 import universe.constellation.orion.viewer.test.IdlingResource
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import kotlin.properties.Delegates
 
@@ -73,12 +60,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         KeyBindingPreferences(getSharedPreferences("key_binding", Context.MODE_PRIVATE))
     }
 
-    val analytics: Analytics by lazy {
-        Analytics.initialize(
-            contentResolver,
-            BuildConfig.ANALYTICS
-        )
-    }
 
     var tempOptions: TemporaryOptions? = null
         private set
@@ -88,14 +69,12 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
 
     var currentBookParameters: LastPageInfo? = null
 
-    val device = createDevice()
-
     private var currentLanguage: String = DEFAULT_LANGUAGE
 
     private val appTheme: String
         get() {
             val theme = options.applicationTheme
-            return if ("DEFAULT" == theme) device.defaultTheme else theme
+            return theme
         }
 
     private val themeId: Int
@@ -111,8 +90,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         get() = Build.VERSION.SDK_INT
 
     override fun onCreate() {
-        logger = AndroidLogger
-        startOrStopDebugLogger(options.getBooleanProperty("DEBUG", false))
         instance = this
         super<Application>.onCreate()
         setLanguage(options.appLanguage)
@@ -148,7 +125,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
             res.updateConfiguration(res.configuration, res.displayMetrics)
         } catch (e: Exception) {
             log("Error setting locale: $currentLanguage", e)
-            analytics.error(e)
         }
 
     }
@@ -169,6 +145,7 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         viewActivity = null
         currentBookParameters = null
     }
+
 
 
     //temporary hack
@@ -198,31 +175,7 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         return File(download, "debug/logs")
     }
 
-    fun startOrStopDebugLogger(start: Boolean) {
-        if (start) {
-            try {
-                val logFolder = debugLogFolder()
-                if (logFolder != null) {
-                    logFolder.mkdirs()
-                    val filePrefix = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_").format(Date())
-                    val file = File.createTempFile(filePrefix, ".trace.txt", logFolder)
-                    startLogger(file)
-                    log("Starting Logger in $file")
-                } else {
-                    log("Can't start logger")
-                }
-            } catch (e: Throwable) {
-                log(e)
-            }
-        } else {
-            log("Stopping logger")
-            stopLogger()
-        }
-    }
 
-    override fun onDestroy(owner: LifecycleOwner) {
-        startOrStopDebugLogger(false)
-    }
 
     companion object {
         var instance: OrionApplication by Delegates.notNull()
@@ -236,22 +189,7 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
             log("Android version :  $CODENAME $RELEASE")
         }
 
-        @JvmStatic
-        fun createDevice(): AndroidDevice {
-            if (ONYX_DEVICE) {
-                log("Using Onyx Device")
-                return OnyxDevice()
-            }
 
-            if (RK30SDK) {
-                log("Using RK30SDK")
-                return MagicBookBoeyeDevice()
-            }
-
-
-            log("Using default android device")
-            return AndroidDevice()
-        }
 
         @JvmField
         val MANUFACTURER = getField("MANUFACTURER")
@@ -265,8 +203,6 @@ class OrionApplication : Application(), DefaultLifecycleObserver {
         @JvmField
         val HARDWARE = getField("HARDWARE")
 
-        @JvmField
-        val ONYX_DEVICE = "ONYX".equals(MANUFACTURER, ignoreCase = true) && OnyxUtil.isEinkDevice
 
         @JvmField
         val RK30SDK = "rk30sdk".equals(MODEL, ignoreCase = true) && ("T62D".equals(
