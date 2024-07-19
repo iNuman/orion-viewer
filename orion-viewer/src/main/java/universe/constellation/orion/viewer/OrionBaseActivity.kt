@@ -63,11 +63,6 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
 
     @JvmOverloads
     protected fun onOrionCreate(savedInstanceState: Bundle?, layoutId: Int, addToolbar: Boolean = false, displayHomeAsUpEnabled: Boolean = false) {
-        if (this is OrionViewerActivity || this is OrionFileManagerActivityBase) {
-            val screenOrientation = getScreenOrientation(applicationDefaultOrientation)
-            changeOrientation(screenOrientation)
-        }
-
         super.onCreate(savedInstanceState)
 
         if (layoutId != -1) {
@@ -77,8 +72,6 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
             }
         }
     }
-
-
 
     fun showWarning(warning: String) {
         Toast.makeText(this, warning, Toast.LENGTH_SHORT).show()
@@ -117,15 +110,6 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
         }
     }
 
-    fun getScreenOrientationItemPos(id: String): Int {
-        return when (id) {
-            "LANDSCAPE" -> 2
-            "PORTRAIT" -> 1
-            "LANDSCAPE_INVERSE" -> 4
-            "PORTRAIT_INVERSE" -> 3
-            else -> 0
-        }
-    }
 
     fun showAlert(title: String, message: String) {
         val builder = createThemedAlertBuilder()
