@@ -291,7 +291,7 @@ class Controller(
         if ("DEFAULT" == orientationId) {
             realOrintationId = activity.applicationDefaultOrientation
         }
-        activity.changeOrientation(activity.getScreenOrientation(realOrintationId))
+//        activity.changeOrientation(activity.getScreenOrientation(realOrintationId))
     }
 
     fun changeColorMode(colorMode: String, invalidate: Boolean) {

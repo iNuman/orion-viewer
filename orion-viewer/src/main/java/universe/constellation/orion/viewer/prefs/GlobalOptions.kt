@@ -77,7 +77,6 @@ class GlobalOptions(
 //                        )
                     } else if (DRAW_OFF_PAGE == name) {
                         activity.fullScene.setDrawOffPage(isDrawOffPage)
-                        //TODO ?
                         activity.view.invalidate()
                     }
                 }
@@ -134,7 +133,10 @@ class GlobalOptions(
         get() = getBooleanProperty(APPLY_AND_CLOSE, false)
 
     val isDrawOffPage: Boolean
-        get() = true //getBooleanProperty(DRAW_OFF_PAGE, instance.device !is EInkDevice)
+        get() = getBooleanProperty(DRAW_OFF_PAGE,true)
+
+    val isShowTapHelp: Boolean
+        get() = getBooleanProperty(SHOW_TAP_HELP, true)
 
     val isNewUI: Boolean
         get() = !getBooleanProperty(OLD_UI, false)

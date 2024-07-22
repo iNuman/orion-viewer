@@ -8,10 +8,7 @@ import android.graphics.Rect
 import android.widget.Toast
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
-import universe.constellation.orion.viewer.dialog.toDialogMargins
-import universe.constellation.orion.viewer.dialog.toMargins
 import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivity
-import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase.Companion.DONT_OPEN_RECENT_FILE
 import universe.constellation.orion.viewer.dialog.HighlightTextDialog
 import universe.constellation.orion.viewer.util.ColorUtil.getColorMode
 
@@ -227,7 +224,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             val scene = activity.fullScene
             val currentBookParameters = activity.orionApplication.currentBookParameters
             if (currentBookParameters != null && getColorMode(currentBookParameters.colorMode) == null) {
-                activity.showLongMessage(activity.getString(R.string.select_color_mode))
+//                activity.showLongMessage(activity.getString(R.string.select_color_mode))
                 return
             }
             if (view.isDefaultColorMatrix()) {
@@ -242,7 +239,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     },
 
     BOOK_OPTIONS(R.string.action_book_options, R.integer.action_book_options) {
-        override fun doAction(activity: OrionBaseActivity) {
+        override fun doAction(activity: OrionViewerActivity) {
 //            val intent = Intent(activity, OrionBookPreferencesActivityX::class.java)
 //            activity.startActivity(intent)
         }
@@ -259,7 +256,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     },
 
     PAGE_LAYOUT(R.string.action_layout_page, R.integer.action_page_layout) {
-        override fun doAction(activity: OrionBaseActivity) {
+        override fun doAction(activity: OrionViewerActivity) {
             BOOK_OPTIONS.doAction(activity)
         }
     },
@@ -285,7 +282,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     },
 
     ROTATION(R.string.action_rotation_page, R.integer.action_rotation_page) {
-        override fun doAction(activity: OrionBaseActivity) {
+        override fun doAction(activity: OrionViewerActivity) {
             BOOK_OPTIONS.doAction(activity)
         }
     },
@@ -341,7 +338,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
                 } catch (ex: ActivityNotFoundException) {
                     log(ex)
                     val string = activity.getString(R.string.warn_msg_no_dictionary)
-                    activity.showWarning(string + ": " + dict + ": " + ex.message)
+//                    activity.showWarning(string + ": " + dict + ": " + ex.message)
                 }
             }
         }
@@ -350,24 +347,24 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
             return parameter ?: ""
         }
     },
-
-    OPEN_BOOK(R.string.action_open, R.integer.action_open_book) {
-        override fun doAction(activity: OrionBaseActivity) {
-            val intent = Intent(activity, OrionFileManagerActivity::class.java)
-            intent.putExtra(DONT_OPEN_RECENT_FILE, true)
-            activity.startActivity(intent)
-        }
-    },
+//
+//    OPEN_BOOK(R.string.action_open, R.integer.action_open_book) {
+//        override fun doAction(activity: OrionBaseActivity) {
+//            val intent = Intent(activity, OrionFileManagerActivity::class.java)
+//            intent.putExtra(DONT_OPEN_RECENT_FILE, true)
+//            activity.startActivity(intent)
+//        }
+//    },
 
     OPTIONS(R.string.action_options_page, R.integer.action_options_page) {
-        override fun doAction(activity: OrionBaseActivity) {
+        override fun doAction(activity: OrionViewerActivity) {
 //            val intent = Intent(activity, OrionPreferenceActivityX::class.java)
 //            activity.startActivity(intent)
         }
     },
 
     CLOSE_ACTION(R.string.action_close, R.integer.action_close, isVisible = false) {
-        override fun doAction(activity: OrionBaseActivity) {
+        override fun doAction(activity: OrionViewerActivity) {
             activity.finish()
         }
     },
@@ -555,37 +552,37 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
         doAction(controller, activity, parameter, rect)
     }
 
-    open fun doAction(activity: OrionBaseActivity) {
+    open fun doAction(activity: OrionViewerActivity) {
     }
 
     protected fun updateMargin(controller: Controller, isCrop: Boolean, index: Int) {
-        var isCrop = isCrop
-        var index = index
-        val cropMargins = controller.margins
-        if (cropMargins.evenCrop && controller.isEvenPage) {
-            if (index == 0 || index == 1) {
-                index += 4
-            }
-        }
-
-        val margins = cropMargins.toDialogMargins()
-        val context = controller.activity.orionApplication
-        val tempOpts = context.tempOptions
-        if (tempOpts!!.inverseCropping) {
-            isCrop = !isCrop
-        }
-        val delta = if (tempOpts.switchCropping) context.options.longCrop else 1
-        margins[index] += if (isCrop) delta else -delta
-        if (margins[index] > OrionViewerActivity.CROP_RESTRICTION_MAX) {
-            margins[index] = OrionViewerActivity.CROP_RESTRICTION_MAX
-        }
-        if (margins[index] < OrionViewerActivity.CROP_RESTRICTION_MIN) {
-            margins[index] = OrionViewerActivity.CROP_RESTRICTION_MIN
-        }
-
-        controller.changeCropMargins(
-            margins.toMargins(cropMargins.evenCrop, cropMargins.cropMode)
-        )
+//        var isCrop = isCrop
+//        var index = index
+//        val cropMargins = controller.margins
+//        if (cropMargins.evenCrop && controller.isEvenPage) {
+//            if (index == 0 || index == 1) {
+//                index += 4
+//            }
+//        }
+//
+//        val margins = cropMargins.toDialogMargins()
+//        val context = controller.activity.orionApplication
+//        val tempOpts = context.tempOptions
+//        if (tempOpts!!.inverseCropping) {
+//            isCrop = !isCrop
+//        }
+//        val delta = if (tempOpts.switchCropping) context.options.longCrop else 1
+//        margins[index] += if (isCrop) delta else -delta
+//        if (margins[index] > OrionViewerActivity.CROP_RESTRICTION_MAX) {
+//            margins[index] = OrionViewerActivity.CROP_RESTRICTION_MAX
+//        }
+//        if (margins[index] < OrionViewerActivity.CROP_RESTRICTION_MIN) {
+//            margins[index] = OrionViewerActivity.CROP_RESTRICTION_MIN
+//        }
+//
+//        controller.changeCropMargins(
+//            margins.toMargins(cropMargins.evenCrop, cropMargins.cropMode)
+//        )
     }
 
     fun getActionName(context: Context): String {

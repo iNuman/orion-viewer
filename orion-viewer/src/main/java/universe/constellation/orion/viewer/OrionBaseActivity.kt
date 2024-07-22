@@ -36,10 +36,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import universe.constellation.orion.viewer.device.Device
-import universe.constellation.orion.viewer.filemanager.OrionFileManagerActivityBase
 import universe.constellation.orion.viewer.prefs.OrionApplication
 
-abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) : AppCompatActivity() {
+abstract class OrionBaseActivity() : AppCompatActivity() {
 
 //    val device: AndroidDevice? = if (viewerType == Device.VIEWER_ACTIVITY) OrionApplication.createDevice() else null
 
@@ -141,15 +140,6 @@ abstract class OrionBaseActivity(val viewerType: Int = Device.DEFAULT_ACTIVITY) 
 
 }
 
-fun Activity.getVectorDrawable(id: Int, color: Int = 0): Drawable {
-    val drawable = VectorDrawableCompat.create(resources, id, this.theme)
-        ?: ColorDrawable(resources.getColor(R.color.orion_orange))
-//    if (color != 0) {
-//        DrawableCompat.setTint(drawable, resources.getColor(R.color.orion_orange))
-//        DrawableCompat.setTintMode(drawable, PorterDuff.Mode.SRC_IN);
-//    }
-    return drawable
-}
 
 fun Context.dpToPixels(value: Float): Int {
     return TypedValue.applyDimension(
