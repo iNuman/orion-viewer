@@ -16,7 +16,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     NONE(R.string.action_none, R.integer.action_none) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             //none action
@@ -26,7 +26,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     FIRST_PAGE(R.string.action_first_page, R.integer.action_first_page, isVisible = false) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             controller?.drawPage(0)
@@ -36,7 +36,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     LAST_PAGE(R.string.action_last_page, R.integer.action_last_page, isVisible = false) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             controller?.drawPage(controller.pageCount - 1)
@@ -47,7 +47,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     SEARCH(R.string.action_crop_page, R.integer.action_crop_page) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             activity.startSearch()
@@ -57,7 +57,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     HIGHLIGHT(R.string.action_highlight_text, R.integer.action_highlight_text) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?,
             rect: Rect
         ) {
@@ -73,7 +73,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     SELECT_TEXT(R.string.action_select_text, R.integer.action_select_text) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             activity.textSelectionMode(false, false)
@@ -83,7 +83,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     SELECT_WORD(R.string.action_select_word, R.integer.action_select_word) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             activity.textSelectionMode(true, false)
@@ -96,7 +96,7 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     ) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
             activity.textSelectionMode(true, true)
@@ -105,25 +105,25 @@ enum class Action(@StringRes val nameRes: Int, @IntegerRes idRes: Int, val isVis
     GOTO(R.string.action_goto_page, R.integer.action_goto_page) {
         override fun doAction(
             controller: Controller?,
-            activity: OrionViewerActivity,
+            activity: PdfFragment,
             parameter: Any?
         ) {
-//            activity.showOrionDialog(OrionViewerActivity.PAGE_SCREEN, this, null)
+//            activity.showOrionDialog(PdfFragment.PAGE_SCREEN, this, null)
         }
     };
 
 //    @JvmField
 //    val code: Int = instance.resources.getInteger(idRes)
 
-    open fun doAction(controller: Controller?, activity: OrionViewerActivity, parameter: Any?) {
+    open fun doAction(controller: Controller?, activity: PdfFragment, parameter: Any?) {
         doAction(activity)
     }
 
-    open fun doAction(controller: Controller?, activity: OrionViewerActivity, parameter: Any?, rect: Rect) {
+    open fun doAction(controller: Controller?, activity: PdfFragment, parameter: Any?, rect: Rect) {
         doAction(controller, activity, parameter, rect)
     }
 
-    open fun doAction(activity: OrionViewerActivity) {
+    open fun doAction(activity: PdfFragment) {
     }
 
 

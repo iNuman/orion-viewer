@@ -9,6 +9,7 @@ import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.dynamicanimation.animation.FloatPropertyCompat
 import universe.constellation.orion.viewer.ContextAction
 import universe.constellation.orion.viewer.OrionViewerActivity
+import universe.constellation.orion.viewer.PdfFragment
 import universe.constellation.orion.viewer.log
 import universe.constellation.orion.viewer.view.OrionDrawScene
 import universe.constellation.orion.viewer.dpToPixels
@@ -30,9 +31,9 @@ enum class ClickType {
 
 class ClickInfo(val x: Int, val y: Int, val clickType: ClickType)
 
-open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewerActivity) : GestureDetector.SimpleOnGestureListener() {
+open class NewTouchProcessor(val view: OrionDrawScene, val activity: PdfFragment) : GestureDetector.SimpleOnGestureListener() {
 
-    private val minFlingDistance = activity.dpToPixels(32f)
+    private val minFlingDistance = activity.context?.dpToPixels(32f)
 
     private val property = object : FloatPropertyCompat<View>("doScroll") {
         var prevValue = 0f
@@ -57,7 +58,7 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
             .setFriction(0.5f)
             .setMaxValue(20000f)
 
-    private val detector = GestureDetectorCompat(activity, this)
+    private val detector = GestureDetectorCompat(activity.requireActivity(), this)
 
     protected var state = State.UNDEFINED
 
@@ -140,7 +141,7 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
         if (e1 == null || abs(velocityY) < 500) return false
         val yDist = abs(e1.y - e2.y)
         if (abs(e1.x - e2.x) > yDist) return false
-        if (yDist < minFlingDistance) return false
+        if (yDist < minFlingDistance!!) return false
 
         flingAnim.cancel()
         property.prevValue = 0f

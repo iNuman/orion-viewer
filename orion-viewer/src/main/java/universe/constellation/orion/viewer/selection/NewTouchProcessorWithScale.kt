@@ -4,14 +4,15 @@ import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import universe.constellation.orion.viewer.OrionViewerActivity
+import universe.constellation.orion.viewer.PdfFragment
 import universe.constellation.orion.viewer.util.MoveUtil
 import universe.constellation.orion.viewer.view.OrionDrawScene
 
-class NewTouchProcessorWithScale(view: OrionDrawScene, activity: OrionViewerActivity) :
+class NewTouchProcessorWithScale(view: OrionDrawScene, activity: PdfFragment) :
         NewTouchProcessor(view, activity),
         ScaleGestureDetector.OnScaleGestureListener {
 
-    private val scaleDetector = ScaleGestureDetector(activity, this)
+    private val scaleDetector = ScaleGestureDetector(activity.requireContext(), this)
 
     private val enableTouchMoveOnPinchZoom = activity.globalOptions.isEnableMoveOnPinchZoom
 
@@ -55,7 +56,7 @@ class NewTouchProcessorWithScale(view: OrionDrawScene, activity: OrionViewerActi
         resetNextState()
         val newX = MoveUtil.calcOffset(startFocus.x, endFocus.x, curScale, enableTouchMoveOnPinchZoom)
         val newY = MoveUtil.calcOffset(startFocus.y, endFocus.y, curScale, enableTouchMoveOnPinchZoom)
-        activity.controller!!.translateAndZoom(curScale, startFocus, endFocus, newX, newY)
+        activity.controller?.translateAndZoom(curScale, startFocus, endFocus, newX, newY)
         view.disableScalingMode()
     }
 

@@ -7,6 +7,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import universe.constellation.orion.viewer.OrionBookListener
 import universe.constellation.orion.viewer.OrionViewerActivity
+import universe.constellation.orion.viewer.PdfFragment
 import universe.constellation.orion.viewer.R
 
 interface Scene  {
@@ -18,14 +19,14 @@ interface Scene  {
 }
 
 @SuppressLint("UseCompatLoadingForDrawables")
-class FullScene(private val scene: ViewGroup, val drawView: OrionDrawScene, statusBar: ViewGroup, val context: OrionViewerActivity) : Scene, OrionBookListener {
+class FullScene(private val scene: ViewGroup, val drawView: OrionDrawScene, statusBar: ViewGroup, val context: PdfFragment) : Scene, OrionBookListener {
 
     val statusBarHelper = StatusBar(scene, statusBar, context)
 
     val colorStuff = ColorStuff()
 
     init {
-        val drawable = VectorDrawableCompat.create(context.resources, R.drawable.loading, context.theme)
+        val drawable = VectorDrawableCompat.create(context.resources, R.drawable.loading, null)
             ?: ColorDrawable(context.resources.getColor(R.color.orion_orange))
         DrawableCompat.setTint(drawable, context.resources.getColor(R.color.orion_orange))
         drawView.init(colorStuff, statusBarHelper, drawable)
@@ -37,7 +38,7 @@ class FullScene(private val scene: ViewGroup, val drawView: OrionDrawScene, stat
 
     override fun setColorMatrix(colorMatrix: FloatArray?) {
         colorStuff.setColorMatrix(scene, colorMatrix)
-        statusBarHelper.setColorMatrix(colorMatrix)
+//        statusBarHelper.setColorMatrix(colorMatrix)
     }
 
     override fun setDrawOffPage(drawOffPage: Boolean) {

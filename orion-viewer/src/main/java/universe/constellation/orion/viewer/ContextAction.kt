@@ -9,7 +9,7 @@ enum class ContextAction(customName: String? = null) {
 
     //now just do word selection
     SELECT_TEXT {
-        override fun doAction(activity: OrionViewerActivity, clickInfo: ClickInfo) {
+        override fun doAction(activity: PdfFragment, clickInfo: ClickInfo) {
             val pos = clickInfo as? ClickInfo ?: return
             activity.selectionAutomata.selectText(
                 true, false,
@@ -29,7 +29,7 @@ enum class ContextAction(customName: String? = null) {
 
     val key = customName ?: name
 
-    open fun doAction(activity: OrionViewerActivity, clickInfo: ClickInfo) {
+    open fun doAction(activity: PdfFragment, clickInfo: ClickInfo) {
 
     }
 

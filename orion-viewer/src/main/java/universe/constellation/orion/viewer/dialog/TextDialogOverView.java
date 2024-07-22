@@ -8,18 +8,19 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import universe.constellation.orion.viewer.OrionViewerActivity;
+import universe.constellation.orion.viewer.PdfFragment;
 import universe.constellation.orion.viewer.view.OrionDrawScene;
 
 public class TextDialogOverView {
 
-    protected final OrionViewerActivity activity;
+    protected final PdfFragment activity;
 
     public final Dialog dialog;
 
-    public TextDialogOverView(OrionViewerActivity activity, int layoutId, int style) {
+    public TextDialogOverView(PdfFragment activity, int layoutId, int style) {
         this.activity = activity;
 
-        dialog = new Dialog(activity, style);
+        dialog = new Dialog(activity.getContext(), style);
         dialog.setCanceledOnTouchOutside(true);
         dialog.setContentView(layoutId);
     }

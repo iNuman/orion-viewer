@@ -14,6 +14,7 @@ import android.widget.PopupWindow;
 import universe.constellation.orion.viewer.Action;
 import universe.constellation.orion.viewer.OrionBaseActivityKt;
 import universe.constellation.orion.viewer.OrionViewerActivity;
+import universe.constellation.orion.viewer.PdfFragment;
 import universe.constellation.orion.viewer.R;
 
 public class SelectedTextActions {
@@ -31,10 +32,10 @@ public class SelectedTextActions {
     public void setOnRectangleHighlightListener(OnRectangleHighlightListener listener) {
         this.onSelectionChangedListener = listener;
     }
-    public SelectedTextActions(final OrionViewerActivity activity, final Dialog originalDialog) {
+    public SelectedTextActions(final PdfFragment activity, final Dialog originalDialog) {
         height = activity.getView().getSceneHeight();
         this.originalDialog = originalDialog;
-        popup = new PopupWindow(activity);
+        popup = new PopupWindow(activity.getActivity());
 //        popup.setFocusable(true);
 //        popup.setTouchable(true);
 //        popup.setOutsideTouchable(true);
@@ -49,7 +50,7 @@ public class SelectedTextActions {
         copy_to_Clipboard.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 dismissOnlyDialog();
-                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager clipboard = (ClipboardManager) activity.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText(text);
 //                Action.HIGHLIGHT.doAction(activity.getController(), activity, text, rectSelection);
                 onSelectionChangedListener.onStateChanged(rectSelection);

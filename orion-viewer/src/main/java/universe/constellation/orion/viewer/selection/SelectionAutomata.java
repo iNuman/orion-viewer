@@ -13,6 +13,7 @@ import java.util.List;
 import universe.constellation.orion.viewer.Action;
 import universe.constellation.orion.viewer.Controller;
 import universe.constellation.orion.viewer.OrionViewerActivity;
+import universe.constellation.orion.viewer.PdfFragment;
 import universe.constellation.orion.viewer.R;
 import universe.constellation.orion.viewer.dialog.DialogOverView;
 import universe.constellation.orion.viewer.document.TextAndSelection;
@@ -37,7 +38,7 @@ public class SelectionAutomata extends DialogOverView {
     private String textWhole;
     private SelectedTextActions selectedTextActions;
 
-    public SelectionAutomata(final OrionViewerActivity activity) {
+    public SelectionAutomata(final PdfFragment activity) {
         super(activity, universe.constellation.orion.viewer.R.layout.text_selector, android.R.style.Theme_Translucent_NoTitleBar);
 
         selectionView = dialog.findViewById(R.id.text_selector);

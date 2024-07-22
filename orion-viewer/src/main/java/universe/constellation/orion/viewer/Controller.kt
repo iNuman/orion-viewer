@@ -43,7 +43,7 @@ import universe.constellation.orion.viewer.view.PageView
 import universe.constellation.orion.viewer.view.ViewDimensionAware
 
 class Controller(
-    val activity: OrionViewerActivity,
+    val activity: PdfFragment,
     val document: Document,
     val layoutStrategy: LayoutStrategy,
     val rootJob: Job = Job(),
@@ -89,7 +89,7 @@ class Controller(
             }
         }
 
-        cropPadding = activity.dpToPixels(5f)
+        cropPadding = activity.requireContext().dpToPixels(5f)
     }
 
     @JvmOverloads

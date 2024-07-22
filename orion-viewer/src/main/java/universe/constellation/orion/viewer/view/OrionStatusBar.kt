@@ -16,6 +16,7 @@ import androidx.core.view.children
 import androidx.core.widget.ImageViewCompat
 import universe.constellation.orion.viewer.OrionBookListener
 import universe.constellation.orion.viewer.OrionViewerActivity
+import universe.constellation.orion.viewer.PdfFragment
 import universe.constellation.orion.viewer.R
 import universe.constellation.orion.viewer.dpToPixels
 import universe.constellation.orion.viewer.util.ColorUtil
@@ -23,7 +24,7 @@ import universe.constellation.orion.viewer.util.ColorUtil
 class StatusBar(
     private val fullScene: ViewGroup,
     private val statusBar: ViewGroup,
-    private val activity: OrionViewerActivity
+    private val activity: PdfFragment
 ) : OrionBookListener {
 
     private val panel = statusBar.findViewById<ViewGroup>(R.id.orion_status_bar)
@@ -182,7 +183,7 @@ class StatusBar(
                 is ImageView -> {
                     it.layoutParams =
                         it.layoutParams?.apply {
-                            val newSize = activity.dpToPixels(size.toFloat())
+                            val newSize = activity.requireContext().dpToPixels(size.toFloat())
                             width = newSize
                             height = newSize
                         }

@@ -28,10 +28,13 @@
                 android:id="@+id/orion_full_scene"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#FFE6E6E6"
+                android:background="#000000"
                 android:orientation="vertical">
 
-                <include layout="@layout/main_statusbar" />
+                <include
+                    android:id="@+id/status_bar_container"
+                    layout="@layout/main_statusbar"
+                    />
 
                 <universe.constellation.orion.viewer.view.OrionDrawScene
                     android:id="@+id/view"
