@@ -87,7 +87,7 @@ class StatusBar(
     }
 
     private fun View.setVisibleOrGone(show: Boolean) {
-        visibility = if (show) View.VISIBLE else View.GONE
+        visibility =  View.GONE
     }
 
     fun setColorMatrix(colorMatrix: FloatArray?) {

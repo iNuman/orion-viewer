@@ -6,52 +6,6 @@ buildscript {
     repositories { mavenCentral() }
 }
 
-/*DJVU CHAIN*/
-task downloadDjvu {
-    doLast {
-        def djvuFolder = new File(djvu)
-        if (djvuFolder.exists()) {
-            // Switch to master so we can properly pull if it was
-            // detached.
-            exec {
-                commandLine = ['git', '-C', djvu, 'checkout', '-f', 'master']
-            }
-            // Fetch
-            exec {
-                commandLine = ['git', '-C', djvu, 'fetch', 'origin']
-            }
-        }
-        else {
-            exec {
-                //origin at git://git.code.sf.net/p/djvu/djvulibre-git
-                commandLine = ['git', 'clone', 'https://github.com/max-kammerer/djvulibre.git', djvu]
-            }
-        }
-
-        exec {
-            workingDir file(djvu)
-            commandLine = ['git', 'checkout', 'a8ae572254a6cf5c0f036e655daf3517a0452e07']
-        }
-    }
-}
-
-//Keep until migration
-task downloadAndPatchDjvu(dependsOn: [downloadDjvu])
-
-task buildDjvu() {
-    doLast {
-        exec {
-            workingDir file(djvuModule)
-            commandLine ndkDir + "/ndk-build"
-        }
-    }
-}
-
-task djvuChain(dependsOn: [buildDjvu])
-
-buildDjvu.mustRunAfter downloadDjvu
-
-
 /*MUPDF CHAIN*/
 task downloadLibArchive {
     def version = "v3.7.4"
@@ -143,4 +97,4 @@ mupdfChain.mustRunAfter djvuChain
 
 
 /*!!!!!!!!!!RUN ME!!!!!!!!*/
-task buildNativeLibs(dependsOn: [djvuChain, mupdfChain])
+task buildNativeLibs(dependsOn: [mupdfChain])

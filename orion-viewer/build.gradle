@@ -30,18 +30,18 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 //    implementation project(":nativeLibs:djvuModule")
     implementation project(":nativeLibs:mupdfModule")
-    implementation "androidx.multidex:multidex:2.0.1"
+//    implementation "androidx.multidex:multidex:2.0.1"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.7.7'
     implementation 'androidx.navigation:navigation-ui-ktx:2.7.7'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
 
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test:core:1.5.0'
-    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+//    androidTestImplementation 'androidx.test:core:1.5.0'
+//    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+//    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+//    androidTestImplementation 'androidx.test:runner:1.5.2'
+//    androidTestImplementation 'androidx.test:rules:1.5.0'
 //    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     //MPP test workaround
@@ -87,11 +87,11 @@ android {
             java {
                 srcDirs += "../nativeLibs/mupdf/platform/java/src"
 
-                if (onyxSdkPath != null) {
-                    srcDirs += onyxSdkPath + "/src/main/java/"
-                }
+//                if (onyxSdkPath != null) {
+//                    srcDirs += onyxSdkPath + "/src/main/java/"
+//                }
             }
-            assets.srcDirs += '../nativeLibs/djvu/share/djvu'
+//            assets.srcDirs += '../nativeLibs/djvu/share/djvu'
         }
 
         androidTest {
@@ -168,79 +168,79 @@ android {
 }
 
 
-tasks.register('downloadTestFiles') {
-    doFirst {
-        testFiles.forEach {
-            def name = it.tokenize('/').last()
-            def fileName = project.rootDir.path + "/orion-viewer/src/androidTest/assets/testData/" + name
-            def file = new File(fileName)
-            if (!file.exists()) {
-                println "Downloading " + it + " into " + file.absolutePath
-                new URL(it).withInputStream { i -> file.withOutputStream { it << i } }
-            }
-        }
-    }
-}
-
-
-// Tests routine
-def testDir = "/sdcard/Download/orion"
-def screenShotDir = "$testDir/failures"
-def localScreenShotDir = getLayout().getBuildDirectory().get().toString() + "/failures"
-
-tasks.register('uploadTestData') {
-    doLast {
-        exec {
-            commandLine(androidComponents.sdkComponents.adb.get(), "push", "--sync", "src/androidTest/assets/.", testDir)
-        }
-    }
-}
-
-def forwardLogcat = tasks.register("forwardLogcat") {
-    //TODO support logcat redirection on Mac
-    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-        doLast {
-            exec {
-                executable("../utils/adbrun.sh")
-                args(androidComponents.sdkComponents.adb.get())
-            }
-        }
-    }
-
-}
-
-def createScreenshotDirectoryTask = tasks.register('createScreenshotDirectory') {
-    doFirst {
-        exec {
-            commandLine(androidComponents.sdkComponents.adb.get(), "shell", "mkdir", "-p", screenShotDir)
-        }
-    }
-
-}
-
-def fetchScreenshotsTask = tasks.register('fetchScreenshots') {
-    doLast {
-        exec {
-            commandLine("mkdir", "-p",  localScreenShotDir)
-        }
-        exec {
-            commandLine(androidComponents.sdkComponents.adb.get(), "pull",  screenShotDir + "/.", localScreenShotDir)
-        }
-    }
-
-    dependsOn {
-        createScreenshotDirectoryTask
-    }
-
-    doFirst {
-        new File(screenShotDir).mkdirs()
-    }
-}
-
-afterEvaluate {
-    connectedDebugAndroidTest.dependsOn 'uploadTestData'
-    connectedDebugAndroidTest.finalizedBy fetchScreenshotsTask
-}
+//tasks.register('downloadTestFiles') {
+//    doFirst {
+//        testFiles.forEach {
+//            def name = it.tokenize('/').last()
+//            def fileName = project.rootDir.path + "/orion-viewer/src/androidTest/assets/testData/" + name
+//            def file = new File(fileName)
+//            if (!file.exists()) {
+//                println "Downloading " + it + " into " + file.absolutePath
+//                new URL(it).withInputStream { i -> file.withOutputStream { it << i } }
+//            }
+//        }
+//    }
+//}
+//
+//
+//// Tests routine
+//def testDir = "/sdcard/Download/orion"
+//def screenShotDir = "$testDir/failures"
+//def localScreenShotDir = getLayout().getBuildDirectory().get().toString() + "/failures"
+//
+//tasks.register('uploadTestData') {
+//    doLast {
+//        exec {
+//            commandLine(androidComponents.sdkComponents.adb.get(), "push", "--sync", "src/androidTest/assets/.", testDir)
+//        }
+//    }
+//}
+//
+//def forwardLogcat = tasks.register("forwardLogcat") {
+//    //TODO support logcat redirection on Mac
+//    if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+//        doLast {
+//            exec {
+//                executable("../utils/adbrun.sh")
+//                args(androidComponents.sdkComponents.adb.get())
+//            }
+//        }
+//    }
+//
+//}
+//
+//def createScreenshotDirectoryTask = tasks.register('createScreenshotDirectory') {
+//    doFirst {
+//        exec {
+//            commandLine(androidComponents.sdkComponents.adb.get(), "shell", "mkdir", "-p", screenShotDir)
+//        }
+//    }
+//
+//}
+//
+//def fetchScreenshotsTask = tasks.register('fetchScreenshots') {
+//    doLast {
+//        exec {
+//            commandLine("mkdir", "-p",  localScreenShotDir)
+//        }
+//        exec {
+//            commandLine(androidComponents.sdkComponents.adb.get(), "pull",  screenShotDir + "/.", localScreenShotDir)
+//        }
+//    }
+//
+//    dependsOn {
+//        createScreenshotDirectoryTask
+//    }
+//
+//    doFirst {
+//        new File(screenShotDir).mkdirs()
+//    }
+//}
+//
+//afterEvaluate {
+//    connectedDebugAndroidTest.dependsOn 'uploadTestData'
+//    connectedDebugAndroidTest.finalizedBy fetchScreenshotsTask
+//}
 
 task('prepareRelease', type: Copy) {
     from('build/outputs/apk/release') {

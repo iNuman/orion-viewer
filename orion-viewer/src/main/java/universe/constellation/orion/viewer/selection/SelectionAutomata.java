@@ -121,7 +121,7 @@ public class SelectionAutomata extends DialogOverView {
         if (!text.isEmpty()) {
             if (isSingleWord && translate) {
                 dialog.dismiss();
-                Action.DICTIONARY.doAction(controller, activity, text);
+//                Action.DICTIONARY.doAction(controller, activity, text);
             } else {
                 if (isSingleWord && !dialog.isShowing()) {
                     //TODO: refactor

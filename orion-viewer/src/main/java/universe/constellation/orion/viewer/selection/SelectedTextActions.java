@@ -46,26 +46,32 @@ public class SelectedTextActions {
         popup.setContentView(view);
 
         ImageView copy_to_Clipboard = view.findViewById(R.id.stext_copy_to_clipboard);
-        copy_to_Clipboard.setOnClickListener(v -> {
-            dismissOnlyDialog();
-            ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(text);
+        copy_to_Clipboard.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dismissOnlyDialog();
+                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboard.setText(text);
 //                Action.HIGHLIGHT.doAction(activity.getController(), activity, text, rectSelection);
-            onSelectionChangedListener.onStateChanged(rectSelection);
-            activity.showFastMessage("Copied to clipboard");
+                onSelectionChangedListener.onStateChanged(rectSelection);
+                activity.showFastMessage("Copied to clipboard");
 
+            }
         });
 
         ImageView add_bookmark = view.findViewById(R.id.stext_add_bookmark);
-        add_bookmark.setOnClickListener(v -> {
-            popup.dismiss();
-            Action.ADD_BOOKMARK.doAction(activity.getController(), activity, text);
+        add_bookmark.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                popup.dismiss();
+//                Action.ADD_BOOKMARK.doAction(activity.getController(), activity, text);
+            }
         });
 
         ImageView open_dictionary = view.findViewById(R.id.stext_open_dictionary);
-        open_dictionary.setOnClickListener(v -> {
-            popup.dismiss();
-            Action.DICTIONARY.doAction(activity.getController(), activity, text);
+        open_dictionary.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                popup.dismiss();
+//                Action.DICTIONARY.doAction(activity.getController(), activity, text);
+            }
         });
 
         ImageView external_actions = view.findViewById(R.id.stext_send_text);

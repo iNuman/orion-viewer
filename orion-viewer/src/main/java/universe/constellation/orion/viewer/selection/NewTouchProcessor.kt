@@ -167,7 +167,7 @@ open class NewTouchProcessor(val view: OrionDrawScene, val activity: OrionViewer
 
         log("onSingleTapConfirmed")
         resetNextState()
-        doAction(ContextAction.TAP_ACTION, e, ClickType.SHORT)
+//        doAction(ContextAction.TAP_ACTION, e, ClickType.SHORT)
         return true
     }
 

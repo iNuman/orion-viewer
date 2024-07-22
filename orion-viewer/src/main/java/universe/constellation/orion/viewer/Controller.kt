@@ -19,12 +19,8 @@
 
 package universe.constellation.orion.viewer
 
-import android.app.ActivityManager
-import android.content.Context.ACTIVITY_SERVICE
 import android.graphics.Point
 import android.graphics.PointF
-import android.os.Build
-import android.util.DisplayMetrics
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,13 +31,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import universe.constellation.orion.viewer.bitmap.DeviceInfo
 import universe.constellation.orion.viewer.document.Document
-import universe.constellation.orion.viewer.document.OutlineItem
 import universe.constellation.orion.viewer.document.Page
 import universe.constellation.orion.viewer.document.TextAndSelection
 import universe.constellation.orion.viewer.document.lastPageNum0
-import universe.constellation.orion.viewer.layout.CropMargins
 import universe.constellation.orion.viewer.layout.LayoutPosition
 import universe.constellation.orion.viewer.layout.LayoutStrategy
 import universe.constellation.orion.viewer.util.ColorUtil
@@ -70,8 +63,6 @@ class Controller(
         get() = pageLayoutManager.currentPageLayout()
 
     private val listener: DocumentViewAdapter
-
-    lateinit var screenOrientation: String
 
     private var lastScreenSize: Point? = null
 
@@ -154,16 +145,6 @@ class Controller(
     val currentPageZoom: Double
         get() = layoutInfo?.docZoom ?: 1.0
 
-    fun changeCropMargins(cropMargins: CropMargins) {
-        if (layoutStrategy.changeCropMargins(cropMargins)) {
-            //TODO: cache auto crop and reset it here
-            sendViewChangeNotification()
-        }
-    }
-
-    val margins: CropMargins
-        get() = layoutStrategy.margins
-
     fun destroy() {
         activity.subscriptionManager.unSubscribe(listener)
         activity.view.pageLayoutManager = null
@@ -182,23 +163,6 @@ class Controller(
         }
     }
 
-    fun onPause() {
-    }
-
-    fun changeOverlap(horizontal: Int, vertical: Int) {
-        if (layoutStrategy.changeOverlapping(horizontal, vertical)) {
-            sendViewChangeNotification()
-        }
-    }
-
-    var rotation: Int
-        get() = layoutStrategy.rotation
-        set(rotation) {
-            if (layoutStrategy.changeRotation(rotation)) {
-                sendViewChangeNotification()
-            }
-        }
-
     val currentPage: Int
         get() = pageLayoutManager.currentPageLayout()?.pageNumber
             ?: errorInDebugOr("No active page $document") { 0 }
@@ -215,7 +179,6 @@ class Controller(
             layoutStrategy.init(info, activity.globalOptions)
 
             lastScreenSize = Point(info.screenWidth, info.screenHeight)
-            changeOrinatation(screenOrientation)
             changeColorMode(info.colorMode, false)
 
             pageLayoutManager = PageLayoutManager(this, activity.view)
@@ -226,43 +189,14 @@ class Controller(
         }
     }
 
-    fun serializeAndSave(info: LastPageInfo, activity: OrionBaseActivity) {
-        layoutStrategy.serialize(info)
-        pageLayoutManager.serialize(info)
-        info.newOffsetX = layoutInfo?.x?.offset ?: 0
-        info.newOffsetY = layoutInfo?.y?.offset ?: 0
-        info.pageNumber = layoutInfo?.pageNumber ?: 0
-        info.screenOrientation = screenOrientation
-        info.save(activity)
-    }
-
     private fun sendViewChangeNotification() {
         activity.subscriptionManager.sendViewChangeNotification()
     }
 
-    val direction: String
-        get() = layoutStrategy.walker.order.name
-
     val layout: Int
         get() = layoutStrategy.layout
 
-    fun setDirectionAndLayout(walkOrder: String, pageLayout: Int) {
-        if (layoutStrategy.changeWalkOrder(walkOrder) or layoutStrategy.changePageLayout(pageLayout)) {
-            sendViewChangeNotification()
-        }
-    }
 
-    fun changetWalkOrder(walkOrder: String) {
-        if (layoutStrategy.changeWalkOrder(walkOrder)) {
-            sendViewChangeNotification()
-        }
-    }
-
-    fun changetPageLayout(pageLayout: Int) {
-        if (layoutStrategy.changePageLayout(pageLayout)) {
-            sendViewChangeNotification()
-        }
-    }
 
     fun changeContrast(contrast: Int) {
         if (this.contrast != contrast) {
@@ -280,19 +214,6 @@ class Controller(
         }
     }
 
-    //zero based
-    val isEvenPage: Boolean
-        get() = currentPage.isZeroBasedEvenPage
-
-    fun changeOrinatation(orientationId: String) {
-        screenOrientation = orientationId
-        log("New orientation $screenOrientation")
-        var realOrintationId = orientationId
-        if ("DEFAULT" == orientationId) {
-            realOrintationId = activity.applicationDefaultOrientation
-        }
-//        activity.changeOrientation(activity.getScreenOrientation(realOrintationId))
-    }
 
     fun changeColorMode(colorMode: String, invalidate: Boolean) {
         activity.fullScene.setColorMatrix(ColorUtil.getColorMode(colorMode))
@@ -301,7 +222,6 @@ class Controller(
         }
     }
 
-    fun getOutline(): Array<OutlineItem>? = document.outline
 
     fun selectRawText(page: Page, startX: Int, startY: Int, widht: Int, height: Int, isSingleWord: Boolean): TextAndSelection? {
         return page.getText(startX, startY, widht, height, isSingleWord)?.apply { log("Text selection in ${page.pageNum}: $this") }
@@ -312,17 +232,6 @@ class Controller(
         else this.dropWhile { it.isWhitespace() || it in PUNCTUATION_CHARS }.dropLastWhile { it.isWhitespace() || it in PUNCTUATION_CHARS }
     }
 
-    fun needPassword(): Boolean {
-        return document.needPassword()
-    }
-
-    suspend fun authenticate(password: String): Boolean {
-        val result = withContext(context) { document.authenticate(password) }
-        if (result) {
-            sendViewChangeNotification()
-        }
-        return result
-    }
 
     fun createPageView(pageNum: Int): PageView {
         return PageView(
@@ -342,18 +251,6 @@ class Controller(
     companion object {
         //https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
         val PUNCTUATION_CHARS = "!\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~".toSet()
-    }
-
-    fun getDeviceInfo(): DeviceInfo {
-        val am = activity.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        Runtime.getRuntime().maxMemory() / 1024
-        Runtime.getRuntime().totalMemory()
-        val dm = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(dm);
-
-        val width = dm.widthPixels
-        val height = dm.heightPixels
-        return DeviceInfo(am.memoryClass, width, height, Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1)
     }
 
     override fun toString(): String {
