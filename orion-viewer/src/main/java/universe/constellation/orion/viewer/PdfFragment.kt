@@ -118,7 +118,7 @@ class PdfFragment : Fragment() {
                 return@launch
             }
 
-//            try {
+            try {
                 if (newDocument.pageCount == 0) {
                     newDocument.destroy()
                     return@launch
@@ -152,17 +152,17 @@ class PdfFragment : Fragment() {
                 lastPageInfo1.totalPages = newDocument.pageCount
                 orionApplication.onNewBook(file.name)
                 doOnLayout(lastPageInfo1)
-//            } catch (e: Exception) {
-//                if (controller != null) {
-//                    log("Exception for page ${e.printStackTrace()}")
-//
-//                    destroyController()
-//                } else {
-//                    newDocument.destroy()
-//                }
-//            } finally {
-//                // orionApplication.idlingRes.free()
-//            }
+            } catch (e: Exception) {
+                if (controller != null) {
+                    log("Exception for page ${e.printStackTrace()}")
+
+                    destroyController()
+                } else {
+                    newDocument.destroy()
+                }
+            } finally {
+                // orionApplication.idlingRes.free()
+            }
         }
     }
 
