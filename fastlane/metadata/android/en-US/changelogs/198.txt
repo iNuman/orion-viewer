@@ -1,1 +1,0 @@
-* More wise content URI processing
